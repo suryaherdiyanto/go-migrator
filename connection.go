@@ -9,14 +9,18 @@ import (
 
 var DB *sql.DB
 
-func New() {
-	DB, err := sql.Open("mysql", "root:root@/testdb")
+func NewConnection(dataSourceName string) error {
+	DB, err := sql.Open("mysql", dataSourceName)
 
 	if err != nil {
-		log.Fatalf("Could not make connection to the database: %v", err)
+		log.Printf("Could not make connection to the database: %v", err)
+		return err
 	}
 
 	if DB.Ping() != nil {
-		log.Fatalf("Error ping to database: %v", err)
+		log.Printf("Error ping to database: %v", err)
+		return err
 	}
+
+	return nil
 }
