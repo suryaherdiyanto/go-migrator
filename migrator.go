@@ -1,0 +1,5 @@
+package gomigrator
+
+func Run() {
+
+}
