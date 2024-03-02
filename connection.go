@@ -2,6 +2,7 @@ package gomigrator
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -18,7 +19,8 @@ func NewConnection(dataSourceName string) error {
 	}
 
 	if DB.Ping() != nil {
-		log.Printf("Error ping to database: %v", err)
+		err = errors.New("could not ping to database")
+		log.Print(err)
 		return err
 	}
 
