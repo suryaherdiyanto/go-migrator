@@ -47,10 +47,15 @@ func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {
 	}
 }
 
-func ParseColumnTemplate(w io.Writer, data any) error {
-	tmpl := template.Must(template.New("column.tmpl").ParseFiles("./template/mysql/column.tmpl"))
+func ParseColumnTemplate(w io.Writer, data *MysqlColumn) error {
+	tmpl, err := template.New(data.Property.Type + ".go.tmpl").ParseFiles("./template/types/" + data.Property.Type + ".go.tmpl")
 
-	err := tmpl.Execute(w, data)
+	if err != nil {
+		return err
+	}
+
+	err = tmpl.Execute(w, data)
+
 	if err != nil {
 		return err
 	}
