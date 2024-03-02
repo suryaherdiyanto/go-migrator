@@ -6,6 +6,21 @@ import (
 	"text/template"
 )
 
+type SQLDataType string
+
+const (
+	VARCHAR   SQLDataType = "varchar"
+	INT       SQLDataType = "int"
+	TINYINT   SQLDataType = "tinyint"
+	MEDIUMINT SQLDataType = "mediumint"
+	BOOL      SQLDataType = "bool"
+	FLOAT     SQLDataType = "float"
+	DOUBLE    SQLDataType = "double"
+	TEXT      SQLDataType = "text"
+	DATE      SQLDataType = "date"
+	DATETIME  SQLDataType = "datetime"
+)
+
 type MysqlDataType struct {
 	Type          string
 	Size          int
@@ -33,7 +48,6 @@ func (c *MysqlColumn) ParseColumn() (string, error) {
 
 	w := new(bytes.Buffer)
 	err := ParseColumnTemplate(w, col)
-
 	if err != nil {
 		return "", err
 	}
