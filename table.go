@@ -22,7 +22,7 @@ const (
 )
 
 type MysqlDataType struct {
-	Type          string
+	Type          SQLDataType
 	Size          int
 	Default       interface{}
 	Nullable      bool
@@ -63,7 +63,7 @@ func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {
 }
 
 func ParseColumnTemplate(w io.Writer, data *MysqlColumn) error {
-	tmpl, err := template.New(data.Property.Type + ".go.tmpl").ParseFiles("./template/types/" + data.Property.Type + ".go.tmpl")
+	tmpl, err := template.New(string(data.Property.Type) + ".go.tmpl").ParseFiles("./template/types/" + string(data.Property.Type) + ".go.tmpl")
 
 	if err != nil {
 		return err
