@@ -1,5 +1,11 @@
 package gomigrator
 
+import (
+	"bytes"
+	"io"
+	"text/template"
+)
+
 type MysqlDataType struct {
 	Type          string
 	Size          int
@@ -16,4 +22,27 @@ type MysqlColumn struct {
 type MysqlTable struct {
 	Name    string
 	Columns []MysqlColumn
+}
+
+func (c *MysqlColumn) ParseColumn() string {
+	col := &MysqlColumn{
+		Name:     c.Name,
+		Property: c.Property,
+	}
+
+	w := new(bytes.Buffer)
+	ParseColumnTemplate(w, col)
+
+	return w.String()
+}
+
+func ParseColumnTemplate(w io.Writer, data any) error {
+	tmpl := template.Must(template.New("column.tmpl").ParseFiles("./template/mysql/column.tmpl"))
+
+	err := tmpl.Execute(w, data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
