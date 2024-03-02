@@ -4,12 +4,17 @@ import (
 	"testing"
 )
 
-func TestCreateColumn(t *testing.T) {
+func TestVarcharColumn(t *testing.T) {
 	column := CreateColumn("first_name", &MysqlDataType{
 		Type: "varchar",
 		Size: 50,
 	})
-	stmt := column.ParseColumn()
+	stmt, err := column.ParseColumn()
+
+	if err != nil {
+		t.Error(err)
+	}
+
 	expected := "first_name varchar(50)"
 
 	if stmt != expected {

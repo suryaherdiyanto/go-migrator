@@ -24,16 +24,20 @@ type MysqlTable struct {
 	Columns []MysqlColumn
 }
 
-func (c *MysqlColumn) ParseColumn() string {
+func (c *MysqlColumn) ParseColumn() (string, error) {
 	col := &MysqlColumn{
 		Name:     c.Name,
 		Property: c.Property,
 	}
 
 	w := new(bytes.Buffer)
-	ParseColumnTemplate(w, col)
+	err := ParseColumnTemplate(w, col)
 
-	return w.String()
+	if err != nil {
+		return "", err
+	}
+
+	return w.String(), nil
 }
 
 func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {
