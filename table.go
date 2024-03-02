@@ -1,14 +1,19 @@
 package gomigrator
 
 type MysqlDataType struct {
-	Name          string
 	Type          string
-	Size          interface{}
+	Size          int
 	Default       interface{}
 	Nullable      bool
 	AutoIncrement bool
 }
 
+type MysqlColumn struct {
+	Name     string
+	Property MysqlDataType
+}
+
 type MysqlTable struct {
-	Attributes []MysqlDataType
+	Name    string
+	Columns []MysqlColumn
 }
