@@ -10,10 +10,3 @@ func CreateTable(tableName string, columns []MysqlColumn) *MysqlTable {
 		Columns: columns,
 	}
 }
-
-func CreateColumn(columnName string, property MysqlDataType) *MysqlColumn {
-	return &MysqlColumn{
-		Name:     columnName,
-		Property: property,
-	}
-}

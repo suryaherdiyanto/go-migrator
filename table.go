@@ -36,6 +36,13 @@ func (c *MysqlColumn) ParseColumn() string {
 	return w.String()
 }
 
+func CreateColumn(columnName string, property MysqlDataType) *MysqlColumn {
+	return &MysqlColumn{
+		Name:     columnName,
+		Property: property,
+	}
+}
+
 func ParseColumnTemplate(w io.Writer, data any) error {
 	tmpl := template.Must(template.New("column.tmpl").ParseFiles("./template/mysql/column.tmpl"))
 
