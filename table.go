@@ -3,6 +3,7 @@ package gomigrator
 import (
 	"bytes"
 	"io"
+	"slices"
 	"text/template"
 )
 
@@ -77,4 +78,16 @@ func ParseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 	}
 
 	return nil
+}
+
+func IsIntegerColumn(t SQLDataType) bool {
+	types := []SQLDataType{
+		INT,
+		TINYINT,
+		MEDIUMINT,
+		BIGINT,
+		BOOL,
+	}
+
+	return slices.Index(types, t) >= 0
 }

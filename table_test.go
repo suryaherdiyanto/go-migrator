@@ -59,3 +59,14 @@ func TestUnsignedInt(t *testing.T) {
 		t.Errorf("Expected: %s, and got %q", expected, stmt)
 	}
 }
+
+func TestIntegerColumn(t *testing.T) {
+	if !IsIntegerColumn(TINYINT) {
+		t.Errorf("Expected %s to be a integer column", TINYINT)
+	}
+}
+func TestNotIntegerColumn(t *testing.T) {
+	if IsIntegerColumn(VARCHAR) {
+		t.Errorf("Expected %s to be not an integer column", TINYINT)
+	}
+}
