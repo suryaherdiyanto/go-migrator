@@ -1,7 +1,7 @@
 package gomigrator
 
 type MysqlDataType struct {
-	Name string
+	Type string
 	Size interface{}
 }
 
