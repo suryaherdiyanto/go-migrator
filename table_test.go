@@ -40,3 +40,22 @@ func TestIntColumnWithAutoIncrement(t *testing.T) {
 		t.Errorf("Expected: %s, and got %q", expected, stmt)
 	}
 }
+
+func TestUnsignedInt(t *testing.T) {
+	column := CreateColumn("ID", &MysqlDataType{
+		Type:     INT,
+		Unsigned: true,
+	})
+
+	stmt, err := column.ParseColumn()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	expected := "ID int UNSIGNED"
+
+	if stmt != expected {
+		t.Errorf("Expected: %s, and got %q", expected, stmt)
+	}
+}
