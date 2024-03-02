@@ -70,3 +70,48 @@ func TestNotIntegerColumn(t *testing.T) {
 		t.Errorf("Expected %s to be not an integer column", TINYINT)
 	}
 }
+
+func TestIntegersColumn(t *testing.T) {
+	type sample struct {
+		Type     SQLDataType
+		Expected string
+	}
+	samples := []sample{
+		{
+			Type:     INT,
+			Expected: "ID int",
+		},
+		{
+			Type:     TINYINT,
+			Expected: "ID tinyint",
+		},
+		{
+			Type:     MEDIUMINT,
+			Expected: "ID mediumint",
+		},
+		{
+			Type:     BIGINT,
+			Expected: "ID bigint",
+		},
+		{
+			Type:     BOOL,
+			Expected: "ID bool",
+		},
+	}
+
+	for _, s := range samples {
+		column := CreateColumn("ID", &MysqlDataType{
+			Type: SQLDataType(s.Type),
+		})
+
+		stmt, err := column.ParseColumn()
+
+		if err != nil {
+			t.Error(err)
+		}
+
+		if stmt != s.Expected {
+			t.Errorf("Expected: %s, but got %q", s.Expected, stmt)
+		}
+	}
+}

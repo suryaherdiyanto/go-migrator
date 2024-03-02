@@ -65,7 +65,15 @@ func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {
 }
 
 func ParseColumnTemplate(w io.Writer, data *MysqlColumn) error {
-	tmpl, err := template.New(string(data.Property.Type) + ".go.tmpl").ParseFiles("./template/types/" + string(data.Property.Type) + ".go.tmpl")
+	templatePath := "./template/types/" + string(data.Property.Type) + ".go.tmpl"
+	templateName := string(data.Property.Type) + ".go.tmpl"
+
+	if IsIntegerColumn(data.Property.Type) {
+		templatePath = "./template/types/int.go.tmpl"
+		templateName = "int.go.tmpl"
+	}
+
+	tmpl, err := template.New(templateName).ParseFiles(templatePath)
 
 	if err != nil {
 		return err
