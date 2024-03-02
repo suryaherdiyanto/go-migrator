@@ -10,6 +10,7 @@ type SQLDataType string
 
 const (
 	VARCHAR   SQLDataType = "varchar"
+	BIGINT    SQLDataType = "bigint"
 	INT       SQLDataType = "int"
 	TINYINT   SQLDataType = "tinyint"
 	MEDIUMINT SQLDataType = "mediumint"
