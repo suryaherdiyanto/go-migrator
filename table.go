@@ -16,7 +16,7 @@ type MysqlDataType struct {
 
 type MysqlColumn struct {
 	Name     string
-	Property MysqlDataType
+	Property *MysqlDataType
 }
 
 type MysqlTable struct {
@@ -36,7 +36,7 @@ func (c *MysqlColumn) ParseColumn() string {
 	return w.String()
 }
 
-func CreateColumn(columnName string, property MysqlDataType) *MysqlColumn {
+func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {
 	return &MysqlColumn{
 		Name:     columnName,
 		Property: property,

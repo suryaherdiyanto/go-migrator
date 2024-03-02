@@ -1,1 +1,1 @@
-{{.Name}} {{.Type}}({{.Size}}) {{with .AutoIncrement}} {{.}} {{end}}
+{{.Name}} {{.Property.Type}}({{.Property.Size}}){{if .Property.AutoIncrement}} AUTO_INCREMENT {{end}}
