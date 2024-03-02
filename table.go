@@ -12,6 +12,7 @@ type MysqlDataType struct {
 	Default       interface{}
 	Nullable      bool
 	AutoIncrement bool
+	Unsigned      bool
 }
 
 type MysqlColumn struct {
