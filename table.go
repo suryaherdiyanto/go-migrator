@@ -77,7 +77,7 @@ func ParseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 	templatePath := "./template/types/" + string(data.Property.Type) + ".go.tmpl"
 	templateName := string(data.Property.Type) + ".go.tmpl"
 
-	if IsIntegerColumn(data.Property.Type) {
+	if IsNumericColumn(data.Property.Type) {
 		templatePath = "./template/types/int.go.tmpl"
 		templateName = "int.go.tmpl"
 	}
@@ -102,13 +102,15 @@ func ParseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 	return nil
 }
 
-func IsIntegerColumn(t SQLDataType) bool {
+func IsNumericColumn(t SQLDataType) bool {
 	types := []SQLDataType{
 		INT,
 		TINYINT,
 		MEDIUMINT,
 		BIGINT,
 		BOOL,
+		FLOAT,
+		DOUBLE,
 	}
 
 	return slices.Index(types, t) >= 0

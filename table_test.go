@@ -61,12 +61,12 @@ func TestUnsignedInt(t *testing.T) {
 }
 
 func TestIntegerColumn(t *testing.T) {
-	if !IsIntegerColumn(TINYINT) {
+	if !IsNumericColumn(TINYINT) {
 		t.Errorf("Expected %s to be a integer column", TINYINT)
 	}
 }
 func TestNotIntegerColumn(t *testing.T) {
-	if IsIntegerColumn(VARCHAR) {
+	if IsNumericColumn(VARCHAR) {
 		t.Errorf("Expected %s to be not an integer column", TINYINT)
 	}
 }
@@ -188,7 +188,47 @@ func TestCharColumn(t *testing.T) {
 }
 
 func TestNotVarcharColumn(t *testing.T) {
-	if IsIntegerColumn(VARCHAR) {
+	if IsNumericColumn(VARCHAR) {
 		t.Errorf("Expected %s to be not an integer column", VARCHAR)
+	}
+}
+
+func TestFloatWithNullable(t *testing.T) {
+	column := CreateColumn("mark", &MysqlDataType{
+		Type:     FLOAT,
+		Nullable: true,
+		Size:     53,
+	})
+
+	stmt, err := column.ParseColumn()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	expected := "mark float(53) NULL"
+
+	if stmt != expected {
+		t.Errorf("Expected: %s, and got %q", expected, stmt)
+	}
+}
+
+func TestDoubleWithNullable(t *testing.T) {
+	column := CreateColumn("mark", &MysqlDataType{
+		Type:     DOUBLE,
+		Nullable: true,
+		Size:     53,
+	})
+
+	stmt, err := column.ParseColumn()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	expected := "mark double(53) NULL"
+
+	if stmt != expected {
+		t.Errorf("Expected: %s, and got %q", expected, stmt)
 	}
 }
