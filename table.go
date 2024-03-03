@@ -11,6 +11,7 @@ type SQLDataType string
 
 const (
 	VARCHAR   SQLDataType = "varchar"
+	CHAR      SQLDataType = "char"
 	BIGINT    SQLDataType = "bigint"
 	INT       SQLDataType = "int"
 	TINYINT   SQLDataType = "tinyint"
@@ -20,7 +21,9 @@ const (
 	DOUBLE    SQLDataType = "double"
 	TEXT      SQLDataType = "text"
 	DATE      SQLDataType = "date"
+	ENUM      SQLDataType = "enum"
 	DATETIME  SQLDataType = "datetime"
+	TIMESTAMP SQLDataType = "timestamp"
 )
 
 type MysqlDataType struct {
