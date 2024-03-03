@@ -73,6 +73,13 @@ func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {
 	}
 }
 
+func CreateTable(name string, tableColumns func() []MysqlColumn) *MysqlTable {
+	return &MysqlTable{
+		Name:    name,
+		Columns: tableColumns(),
+	}
+}
+
 func ParseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 	templatePath := "./template/types/" + string(data.Property.Type) + ".go.tmpl"
 	templateName := string(data.Property.Type) + ".go.tmpl"
@@ -100,6 +107,21 @@ func ParseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 	}
 
 	return nil
+}
+
+func parseTableTemplate(w io.Writer, data *MysqlTable) error {
+	templatePath := "./template/mysql/create-table.go.tmpl"
+	return parseTemplate(w, data, "create-table.go.tmpl", templatePath)
+}
+
+func parseTemplate(w io.Writer, data any, name string, path string) error {
+	tmpl, err := template.New(name).ParseFiles(path)
+
+	if err != nil {
+		return err
+	}
+
+	return tmpl.Execute(w, data)
 }
 
 func IsNumericColumn(t SQLDataType) bool {
