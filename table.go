@@ -94,19 +94,7 @@ func ParseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 		templateName = "varchar.go.tmpl"
 	}
 
-	tmpl, err := template.New(templateName).ParseFiles(templatePath)
-
-	if err != nil {
-		return err
-	}
-
-	err = tmpl.Execute(w, data)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return parseTemplate(w, data, templateName, templatePath)
 }
 
 func parseTableTemplate(w io.Writer, data *MysqlTable) error {
