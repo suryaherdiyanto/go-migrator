@@ -82,6 +82,11 @@ func ParseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 		templateName = "int.go.tmpl"
 	}
 
+	if IsTextColumn(data.Property.Type) {
+		templatePath = "./template/types/varchar.go.tmpl"
+		templateName = "varchar.go.tmpl"
+	}
+
 	tmpl, err := template.New(templateName).ParseFiles(templatePath)
 
 	if err != nil {
@@ -104,6 +109,18 @@ func IsIntegerColumn(t SQLDataType) bool {
 		MEDIUMINT,
 		BIGINT,
 		BOOL,
+	}
+
+	return slices.Index(types, t) >= 0
+}
+
+func IsTextColumn(t SQLDataType) bool {
+	types := []SQLDataType{
+		CHAR,
+		VARCHAR,
+		TEXT,
+		DATE,
+		DATETIME,
 	}
 
 	return slices.Index(types, t) >= 0

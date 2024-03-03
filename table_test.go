@@ -71,6 +71,51 @@ func TestNotIntegerColumn(t *testing.T) {
 	}
 }
 
+func TestTextsColumn(t *testing.T) {
+	type sample struct {
+		Type     SQLDataType
+		Expected string
+		Size     int
+	}
+	samples := []sample{
+		{
+			Type:     CHAR,
+			Expected: "name char(10)",
+			Size:     10,
+		},
+		{
+			Type:     VARCHAR,
+			Expected: "name varchar(50)",
+			Size:     50,
+		},
+		{
+			Type:     DATE,
+			Expected: "name date",
+		},
+		{
+			Type:     DATETIME,
+			Expected: "name datetime",
+		},
+	}
+
+	for _, s := range samples {
+		column := CreateColumn("name", &MysqlDataType{
+			Type: SQLDataType(s.Type),
+			Size: s.Size,
+		})
+
+		stmt, err := column.ParseColumn()
+
+		if err != nil {
+			t.Error(err)
+		}
+
+		if stmt != s.Expected {
+			t.Errorf("Expected: %s, but got %q", s.Expected, stmt)
+		}
+	}
+}
+
 func TestIntegersColumn(t *testing.T) {
 	type sample struct {
 		Type     SQLDataType
@@ -133,5 +178,17 @@ func TestEnumWithDefault(t *testing.T) {
 
 	if stmt != expected {
 		t.Errorf("Expected: %s, and got %q", expected, stmt)
+	}
+}
+
+func TestCharColumn(t *testing.T) {
+	if !IsTextColumn(VARCHAR) {
+		t.Errorf("Expected %s to be a text column", VARCHAR)
+	}
+}
+
+func TestNotVarcharColumn(t *testing.T) {
+	if IsIntegerColumn(VARCHAR) {
+		t.Errorf("Expected %s to be not an integer column", VARCHAR)
 	}
 }
