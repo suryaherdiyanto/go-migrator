@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"slices"
+	"strings"
 	"text/template"
 )
 
@@ -33,6 +34,7 @@ type MysqlDataType struct {
 	Nullable      bool
 	AutoIncrement bool
 	Unsigned      bool
+	EnumOptions   []string
 }
 
 type MysqlColumn struct {
@@ -57,7 +59,11 @@ func (c *MysqlColumn) ParseColumn() (string, error) {
 		return "", err
 	}
 
-	return w.String(), nil
+	return strings.Replace(w.String(), "\n", "", 1), nil
+}
+
+func (o *MysqlDataType) PrintEnumValues() string {
+	return strings.Join(o.EnumOptions, ",")
 }
 
 func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {

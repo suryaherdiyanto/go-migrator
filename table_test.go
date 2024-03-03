@@ -115,3 +115,23 @@ func TestIntegersColumn(t *testing.T) {
 		}
 	}
 }
+
+func TestEnumWithDefault(t *testing.T) {
+	column := CreateColumn("role", &MysqlDataType{
+		Type:        ENUM,
+		EnumOptions: []string{"admin", "employee", "supervisor"},
+		Default:     "admin",
+	})
+
+	stmt, err := column.ParseColumn()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	expected := "role enum(admin,employee,supervisor) DEFAULT 'admin'"
+
+	if stmt != expected {
+		t.Errorf("Expected: %s, and got %q", expected, stmt)
+	}
+}
