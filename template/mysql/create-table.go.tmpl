@@ -1,0 +1,3 @@
+CREATE TABLE {{.Name}} (
+    {{range .Columns}}{{.ParseColumn}}{{end}}
+)

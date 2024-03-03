@@ -1,6 +1,7 @@
 package gomigrator
 
 import (
+	"bytes"
 	"testing"
 )
 
@@ -230,5 +231,38 @@ func TestDoubleWithNullable(t *testing.T) {
 
 	if stmt != expected {
 		t.Errorf("Expected: %s, and got %q", expected, stmt)
+	}
+}
+
+func TestCreateTableParsing(t *testing.T) {
+	table := CreateTable("users", func() []MysqlColumn {
+		return []MysqlColumn{
+			*CreateColumn("ID", &MysqlDataType{
+				Type:          INT,
+				AutoIncrement: true,
+			}),
+			*CreateColumn("first_name", &MysqlDataType{
+				Type: VARCHAR,
+				Size: 50,
+			}),
+			*CreateColumn("last_name", &MysqlDataType{
+				Type:     VARCHAR,
+				Size:     50,
+				Nullable: true,
+			}),
+			*CreateColumn("dob", &MysqlDataType{
+				Type: DATE,
+			}),
+			*CreateColumn("bio", &MysqlDataType{
+				Type: TEXT,
+			}),
+		}
+	})
+
+	buff := new(bytes.Buffer)
+	err := parseTableTemplate(buff, table)
+
+	if err != nil {
+		t.Error(err)
 	}
 }
