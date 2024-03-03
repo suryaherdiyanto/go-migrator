@@ -1,1 +1,1 @@
-{{.Name}} {{.Property.Type}}{{with .Property.Size}}({{.}}){{end}}
+{{.Name}} {{.Property.Type}}{{with .Property.Size}}({{.}}){{end}}{{if .Property.Nullable}} NULL{{end}}
