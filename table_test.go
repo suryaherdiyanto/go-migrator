@@ -35,7 +35,7 @@ func TestIntColumnWithAutoIncrement(t *testing.T) {
 		t.Error(err)
 	}
 
-	expected := "ID int AUTO_INCREMENT"
+	expected := "ID int AUTO_INCREMENT PRIMARY KEY"
 
 	if stmt != expected {
 		t.Errorf("Expected: %s, and got %q", expected, stmt)
@@ -175,7 +175,7 @@ func TestEnumWithDefault(t *testing.T) {
 		t.Error(err)
 	}
 
-	expected := "role enum(admin,employee,supervisor) DEFAULT 'admin'"
+	expected := "role enum('admin', 'employee', 'supervisor') DEFAULT 'admin'"
 
 	if stmt != expected {
 		t.Errorf("Expected: %s, and got %q", expected, stmt)
