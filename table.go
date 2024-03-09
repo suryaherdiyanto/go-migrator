@@ -1,7 +1,6 @@
 package gomigrator
 
 import (
-	"bytes"
 	"io"
 	"slices"
 	"strings"
@@ -37,11 +36,6 @@ type MysqlDataType struct {
 	EnumOptions   []string
 }
 
-type MysqlColumn struct {
-	Name     string
-	Property *MysqlDataType
-}
-
 type MysqlTable struct {
 	Name    string
 	Columns []MysqlColumn
@@ -51,30 +45,8 @@ func (mt *MysqlTable) ColumnLength() int {
 	return len(mt.Columns) - 1
 }
 
-func (c *MysqlColumn) ParseColumn() (string, error) {
-	col := &MysqlColumn{
-		Name:     c.Name,
-		Property: c.Property,
-	}
-
-	w := new(bytes.Buffer)
-	err := parseColumnTemplate(w, col)
-	if err != nil {
-		return "", err
-	}
-
-	return strings.Replace(w.String(), "\n", "", 1), nil
-}
-
 func (o *MysqlDataType) PrintEnumValues() string {
 	return "'" + strings.Join(o.EnumOptions, "', '") + "'"
-}
-
-func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {
-	return &MysqlColumn{
-		Name:     columnName,
-		Property: property,
-	}
 }
 
 func CreateTable(name string, tableColumns func() []MysqlColumn) *MysqlTable {
@@ -82,23 +54,6 @@ func CreateTable(name string, tableColumns func() []MysqlColumn) *MysqlTable {
 		Name:    name,
 		Columns: tableColumns(),
 	}
-}
-
-func parseColumnTemplate(w io.Writer, data *MysqlColumn) error {
-	templatePath := "./template/types/" + string(data.Property.Type) + ".go.tmpl"
-	templateName := string(data.Property.Type) + ".go.tmpl"
-
-	if IsNumericColumn(data.Property.Type) {
-		templatePath = "./template/types/int.go.tmpl"
-		templateName = "int.go.tmpl"
-	}
-
-	if IsTextColumn(data.Property.Type) {
-		templatePath = "./template/types/varchar.go.tmpl"
-		templateName = "varchar.go.tmpl"
-	}
-
-	return parseTemplate(w, data, templateName, templatePath)
 }
 
 func parseTableTemplate(w io.Writer, data *MysqlTable) error {
