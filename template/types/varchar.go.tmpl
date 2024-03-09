@@ -1,1 +1,1 @@
-{{.Name}} {{.Property.Type}}{{with .Property.Size}}({{.}}){{end}}{{if .Property.Unique}} UNIQUE{{end}}{{if .Property.Nullable}} NULL{{end}}
+{{.Name}} {{.Property.Type}}{{with .Property.Size}}({{.}}){{end}}{{if .Property.PrimaryKey}} PRIMARY KEY{{end}}{{if .Property.Unique}} UNIQUE{{end}}{{if .Property.Nullable}} NULL{{end}}

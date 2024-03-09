@@ -35,6 +35,7 @@ type MysqlDataType struct {
 	Unsigned      bool
 	EnumOptions   []string
 	Unique        bool
+	PrimaryKey    bool
 }
 
 type MysqlTable struct {
