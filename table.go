@@ -58,7 +58,7 @@ func (c *MysqlColumn) ParseColumn() (string, error) {
 	}
 
 	w := new(bytes.Buffer)
-	err := ParseColumnTemplate(w, col)
+	err := parseColumnTemplate(w, col)
 	if err != nil {
 		return "", err
 	}
@@ -84,7 +84,7 @@ func CreateTable(name string, tableColumns func() []MysqlColumn) *MysqlTable {
 	}
 }
 
-func ParseColumnTemplate(w io.Writer, data *MysqlColumn) error {
+func parseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 	templatePath := "./template/types/" + string(data.Property.Type) + ".go.tmpl"
 	templateName := string(data.Property.Type) + ".go.tmpl"
 
