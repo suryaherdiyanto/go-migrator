@@ -266,3 +266,55 @@ func TestCreateTableParsing(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestCreateTable(t *testing.T) {
+	db, err := NewConnection("root:root@tcp(127.0.0.1:3306)/testdb")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	table := CreateTable("users", func() []MysqlColumn {
+		return []MysqlColumn{
+			*CreateColumn("ID", &MysqlDataType{
+				Type:          INT,
+				AutoIncrement: true,
+			}),
+			*CreateColumn("first_name", &MysqlDataType{
+				Type: VARCHAR,
+				Size: 50,
+			}),
+			*CreateColumn("last_name", &MysqlDataType{
+				Type:     VARCHAR,
+				Size:     50,
+				Nullable: true,
+			}),
+			*CreateColumn("dob", &MysqlDataType{
+				Type: DATE,
+			}),
+			*CreateColumn("bio", &MysqlDataType{
+				Type: TEXT,
+			}),
+			*CreateColumn("sex", &MysqlDataType{
+				Type:        ENUM,
+				EnumOptions: []string{"l", "p"},
+				Default:     "p",
+			}),
+		}
+	})
+	defer db.Close()
+
+	buff := new(bytes.Buffer)
+	err = parseTableTemplate(buff, table)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = db.Exec(buff.String())
+
+	if err != nil {
+		t.Error(err)
+	}
+
+}

@@ -8,21 +8,19 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var DB *sql.DB
-
-func NewConnection(dataSourceName string) error {
-	DB, err := sql.Open("mysql", dataSourceName)
+func NewConnection(dataSourceName string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", dataSourceName)
 
 	if err != nil {
 		log.Printf("Could not make connection to the database: %v", err)
-		return err
+		return db, err
 	}
 
-	if DB.Ping() != nil {
+	if db.Ping() != nil {
 		err = errors.New("could not ping to database")
 		log.Print(err)
-		return err
+		return db, err
 	}
 
-	return nil
+	return db, nil
 }
