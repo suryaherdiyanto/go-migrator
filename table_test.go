@@ -311,6 +311,7 @@ func TestCreateTable(t *testing.T) {
 		t.Error(err)
 	}
 
+	_, _ = db.Exec("DROP TABLE IF EXISTS users")
 	_, err = db.Exec(buff.String())
 
 	if err != nil {

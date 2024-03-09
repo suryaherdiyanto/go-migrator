@@ -67,7 +67,7 @@ func (c *MysqlColumn) ParseColumn() (string, error) {
 }
 
 func (o *MysqlDataType) PrintEnumValues() string {
-	return strings.Join(o.EnumOptions, ",")
+	return "'" + strings.Join(o.EnumOptions, "', '") + "'"
 }
 
 func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {

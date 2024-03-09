@@ -1,1 +1,1 @@
-{{.Name}} {{.Property.Type}}{{with .Property.Size}}({{.}}){{end}}{{if .Property.AutoIncrement}} AUTO_INCREMENT{{end}}{{if .Property.Unsigned}} UNSIGNED{{end}}{{if .Property.Nullable}} NULL{{end}}
+{{.Name}} {{.Property.Type}}{{with .Property.Size}}({{.}}){{end}}{{if .Property.AutoIncrement}} AUTO_INCREMENT PRIMARY KEY{{end}}{{if .Property.Unsigned}} UNSIGNED{{end}}{{if .Property.Nullable}} NULL{{end}}
