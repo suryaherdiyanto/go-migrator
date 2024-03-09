@@ -72,20 +72,6 @@ func parseTemplate(w io.Writer, data any, name string, path string) error {
 	return tmpl.Execute(w, data)
 }
 
-func IsNumericColumn(t SQLDataType) bool {
-	types := []SQLDataType{
-		INT,
-		TINYINT,
-		MEDIUMINT,
-		BIGINT,
-		BOOL,
-		FLOAT,
-		DOUBLE,
-	}
-
-	return slices.Index(types, t) >= 0
-}
-
 func IsTextColumn(t SQLDataType) bool {
 	types := []SQLDataType{
 		CHAR,
