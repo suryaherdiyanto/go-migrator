@@ -47,6 +47,10 @@ type MysqlTable struct {
 	Columns []MysqlColumn
 }
 
+func (mt *MysqlTable) ColumnLength() int {
+	return len(mt.Columns) - 1
+}
+
 func (c *MysqlColumn) ParseColumn() (string, error) {
 	col := &MysqlColumn{
 		Name:     c.Name,
