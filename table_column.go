@@ -43,6 +43,15 @@ func parseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 	return parseTemplate(w, data, templateName, templatePath)
 }
 
+func Varchar(name string, length int, props *MysqlDataType) *MysqlColumn {
+	return &MysqlColumn{
+		Name: name,
+		Property: &MysqlDataType{
+			Size: length,
+		},
+	}
+}
+
 func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {
 	return &MysqlColumn{
 		Name:     columnName,

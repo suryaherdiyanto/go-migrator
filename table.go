@@ -34,6 +34,7 @@ type MysqlDataType struct {
 	AutoIncrement bool
 	Unsigned      bool
 	EnumOptions   []string
+	Unique        bool
 }
 
 type MysqlTable struct {
