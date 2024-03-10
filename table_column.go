@@ -7,6 +7,23 @@ import (
 	"strings"
 )
 
+const (
+	VARCHAR   SQLDataType = "varchar"
+	CHAR      SQLDataType = "char"
+	BIGINT    SQLDataType = "bigint"
+	INT       SQLDataType = "int"
+	TINYINT   SQLDataType = "tinyint"
+	MEDIUMINT SQLDataType = "mediumint"
+	BOOL      SQLDataType = "bool"
+	FLOAT     SQLDataType = "float"
+	DOUBLE    SQLDataType = "double"
+	TEXT      SQLDataType = "text"
+	DATE      SQLDataType = "date"
+	ENUM      SQLDataType = "enum"
+	DATETIME  SQLDataType = "datetime"
+	TIMESTAMP SQLDataType = "timestamp"
+)
+
 type MysqlColumn struct {
 	Name     string
 	Property *MysqlDataType
