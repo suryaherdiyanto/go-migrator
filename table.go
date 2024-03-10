@@ -41,6 +41,10 @@ func CreateTable(name string, tableColumns func() []MysqlColumn) *MysqlTable {
 	}
 }
 
+func CreateIndex(indexName string, table string, columns []string) string {
+	return "CREATE INDEX " + indexName + " ON " + table + "(" + strings.Join(columns, ", ") + ");"
+}
+
 func parseTableTemplate(w io.Writer, data *MysqlTable) error {
 	templatePath := "./template/mysql/create-table.go.tmpl"
 	return parseTemplate(w, data, "create-table.go.tmpl", templatePath)

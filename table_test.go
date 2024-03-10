@@ -319,3 +319,13 @@ func TestCreateTable(t *testing.T) {
 	}
 
 }
+
+func TestCreateIndex(t *testing.T) {
+	index := CreateIndex("idx_users", "users", []string{"first_name", "last_name"})
+
+	expected := "CREATE INDEX idx_users ON users(first_name, last_name);"
+
+	if index != expected {
+		t.Errorf("Expected: %s, and got %q", expected, index)
+	}
+}
