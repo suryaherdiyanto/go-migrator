@@ -292,7 +292,7 @@ func (c *MysqlColumns) Double(name string, props *NumericColumnProps) {
 	col := &MysqlColumn{
 		Name: name,
 		Property: &MysqlDataType{
-			Type:       FLOAT,
+			Type:       DOUBLE,
 			Size:       props.Size,
 			Precision:  props.Precision,
 			Nullable:   props.Nullable,
