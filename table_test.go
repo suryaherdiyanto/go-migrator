@@ -332,8 +332,8 @@ func TestCreateIndex(t *testing.T) {
 
 func TestCreateTableFunc(t *testing.T) {
 	table := CreateTableFunc("users", func(cols *MysqlColumns) {
-		cols.Varchar("first_name", 50, &MysqlDataType{})
-		cols.Varchar("last_name", 50, &MysqlDataType{Nullable: true})
+		cols.Varchar("first_name", 50, &TextColumnProps{})
+		cols.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
 	})
 
 	tableLength := len(table.Columns)
