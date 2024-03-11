@@ -88,6 +88,11 @@ func parseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 	if IsNumericColumn(data.Property.Type) {
 		templatePath = "./template/types/int.go.tmpl"
 		templateName = "int.go.tmpl"
+
+		if data.Property.Type == FLOAT || data.Property.Type == DOUBLE {
+			templatePath = "./template/types/float.go.tmpl"
+			templateName = "float.go.tmpl"
+		}
 	}
 
 	if IsTextColumn(data.Property.Type) {
