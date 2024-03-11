@@ -29,6 +29,10 @@ type MysqlColumn struct {
 	Property *MysqlDataType
 }
 
+type MysqlColumns struct {
+	Columns []MysqlColumn
+}
+
 func (c *MysqlColumn) ParseColumn() (string, error) {
 	col := &MysqlColumn{
 		Name:     c.Name,
@@ -75,13 +79,53 @@ func parseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 	return parseTemplate(w, data, templateName, templatePath)
 }
 
-func Varchar(name string, length int, props *MysqlDataType) *MysqlColumn {
-	return &MysqlColumn{
+func NewMysqlColumns() *MysqlColumns {
+	return &MysqlColumns{}
+}
+
+func (c *MysqlColumns) Varchar(name string, length int, props *MysqlDataType) {
+	col := &MysqlColumn{
 		Name: name,
 		Property: &MysqlDataType{
-			Size: length,
+			Type:       VARCHAR,
+			Size:       length,
+			Unique:     props.Unique,
+			Nullable:   props.Nullable,
+			PrimaryKey: props.PrimaryKey,
 		},
 	}
+
+	c.Columns = append(c.Columns, *col)
+}
+
+func (c *MysqlColumns) Char(name string, length int, props *MysqlDataType) {
+	col := &MysqlColumn{
+		Name: name,
+		Property: &MysqlDataType{
+			Type:       CHAR,
+			Size:       length,
+			Unique:     props.Unique,
+			Nullable:   props.Nullable,
+			PrimaryKey: props.PrimaryKey,
+		},
+	}
+
+	c.Columns = append(c.Columns, *col)
+}
+
+func (c *MysqlColumns) Integer(name string, length int, props *MysqlDataType) {
+	col := &MysqlColumn{
+		Name: name,
+		Property: &MysqlDataType{
+			Type:          INT,
+			Unique:        props.Unique,
+			Nullable:      props.Nullable,
+			Unsigned:      props.Unsigned,
+			AutoIncrement: props.AutoIncrement,
+		},
+	}
+
+	c.Columns = append(c.Columns, *col)
 }
 
 func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {

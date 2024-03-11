@@ -329,3 +329,17 @@ func TestCreateIndex(t *testing.T) {
 		t.Errorf("Expected: %s, and got %q", expected, index)
 	}
 }
+
+func TestCreateTableFunc(t *testing.T) {
+	table := CreateTableFunc("users", func(cols *MysqlColumns) {
+		cols.Varchar("first_name", 50, &MysqlDataType{})
+		cols.Varchar("last_name", 50, &MysqlDataType{Nullable: true})
+	})
+
+	tableLength := len(table.Columns)
+
+	if tableLength != 2 {
+		t.Errorf("Expected 2 columns, but got %d", tableLength)
+
+	}
+}

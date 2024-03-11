@@ -41,6 +41,16 @@ func CreateTable(name string, tableColumns func() []MysqlColumn) *MysqlTable {
 	}
 }
 
+func CreateTableFunc(name string, tableColumns func(cols *MysqlColumns)) *MysqlTable {
+	columns := NewMysqlColumns()
+	tableColumns(columns)
+
+	return &MysqlTable{
+		Name:    name,
+		Columns: columns.Columns,
+	}
+}
+
 func CreateIndex(indexName string, table string, columns []string) string {
 	return "CREATE INDEX " + indexName + " ON " + table + "(" + strings.Join(columns, ", ") + ");"
 }
