@@ -19,6 +19,7 @@ type MysqlDataType struct {
 	EnumOptions   []string
 	Unique        bool
 	PrimaryKey    bool
+	Precision     int
 }
 
 type MysqlTable struct {
