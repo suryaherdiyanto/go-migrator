@@ -1,6 +1,7 @@
 package gomigrator
 
 import (
+	"database/sql"
 	"io"
 	"slices"
 	"strings"
@@ -54,6 +55,20 @@ func CreateTableFunc(name string, tableColumns func(cols *MysqlColumns)) *MysqlT
 
 func CreateIndex(indexName string, table string, columns []string) string {
 	return "CREATE INDEX " + indexName + " ON " + table + "(" + strings.Join(columns, ", ") + ");"
+}
+
+func (t *MysqlTable) Run(db *sql.DB) error {
+	buff := new(strings.Builder)
+	err := parseTableTemplate(buff, t)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec(buff.String())
+	defer db.Close()
+
+	return err
 }
 
 func parseTableTemplate(w io.Writer, data *MysqlTable) error {

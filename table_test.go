@@ -343,3 +343,28 @@ func TestCreateTableFunc(t *testing.T) {
 
 	}
 }
+
+func TestCreateTableFuncRun(t *testing.T) {
+	db, err := NewConnection("root:root@tcp(127.0.0.1:3306)/testdb")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	table := CreateTableFunc("items", func(cols *MysqlColumns) {
+		cols.Varchar("name", 50, &TextColumnProps{})
+		cols.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
+		cols.Float("mark", &NumericColumnProps{})
+		cols.Double("price", &NumericColumnProps{})
+	})
+
+	defer db.Close()
+
+	_, _ = db.Exec("DROP TABLE IF EXISTS items")
+
+	err = table.Run(db)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
