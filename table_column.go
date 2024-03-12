@@ -2,6 +2,8 @@ package gomigrator
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"io"
 	"slices"
 	"strings"
@@ -107,137 +109,177 @@ func NewMysqlColumns() *MysqlColumns {
 	return &MysqlColumns{}
 }
 
+func fillProps(t *MysqlDataType, props interface{}) error {
+	switch p := props.(type) {
+	case TextColumnProps:
+		t.Unique = p.Unique
+		t.Default = p.Default
+		t.PrimaryKey = p.PrimaryKey
+		t.Nullable = p.Nullable
+		return nil
+	case NumericColumnProps:
+		t.Unique = p.Unique
+		t.Default = p.Default
+		t.PrimaryKey = p.PrimaryKey
+		t.Nullable = p.Nullable
+		t.AutoIncrement = p.AutoIncrement
+		t.Unsigned = p.Unsigned
+		t.Precision = p.Precision
+		return nil
+	default:
+		return errors.New(fmt.Sprintf("Invalid type %v", props))
+
+	}
+}
 func (c *MysqlColumns) Varchar(name string, length int, props *TextColumnProps) {
+	dataType := MysqlDataType{
+		Type: VARCHAR,
+		Size: length,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type:       VARCHAR,
-			Size:       length,
-			Unique:     props.Unique,
-			Nullable:   props.Nullable,
-			PrimaryKey: props.PrimaryKey,
-			Default:    props.Default,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
 }
 
 func (c *MysqlColumns) Char(name string, length int, props *TextColumnProps) {
+	dataType := MysqlDataType{
+		Type: CHAR,
+		Size: length,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type:       CHAR,
-			Size:       length,
-			Unique:     props.Unique,
-			Nullable:   props.Nullable,
-			PrimaryKey: props.PrimaryKey,
-			Default:    props.Default,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
 }
 
 func (c *MysqlColumns) Text(name string, props *TextColumnProps) {
+	dataType := MysqlDataType{
+		Type: TEXT,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type:       TEXT,
-			Unique:     props.Unique,
-			Nullable:   props.Nullable,
-			PrimaryKey: props.PrimaryKey,
-			Default:    props.Default,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
 }
 
 func (c *MysqlColumns) Date(name string, props *TextColumnProps) {
+	dataType := MysqlDataType{
+		Type: DATE,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type:       DATE,
-			Nullable:   props.Nullable,
-			PrimaryKey: props.PrimaryKey,
-			Default:    props.Default,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
 }
 
 func (c *MysqlColumns) Timestamp(name string, props *TextColumnProps) {
+	dataType := MysqlDataType{
+		Type: TIMESTAMP,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type: DATE,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
 }
 
 func (c *MysqlColumns) DateTime(name string, props *TextColumnProps) {
+	dataType := MysqlDataType{
+		Type: DATETIME,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type:       DATETIME,
-			Unique:     props.Unique,
-			Nullable:   props.Nullable,
-			PrimaryKey: props.PrimaryKey,
-			Default:    props.Default,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
 }
 
 func (c *MysqlColumns) Enum(name string, options []string, props *TextColumnProps) {
+	dataType := MysqlDataType{
+		Type: ENUM,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type:        ENUM,
-			Unique:      props.Unique,
-			Nullable:    props.Nullable,
-			Default:     props.Default,
-			EnumOptions: options,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
 }
 
 func (c *MysqlColumns) Int(name string, props *NumericColumnProps) {
+	dataType := MysqlDataType{
+		Type: INT,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type:          INT,
-			Unique:        props.Unique,
-			Nullable:      props.Nullable,
-			PrimaryKey:    props.PrimaryKey,
-			Default:       props.Default,
-			AutoIncrement: props.AutoIncrement,
-			Unsigned:      props.Unsigned,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
 }
 
 func (c *MysqlColumns) Tinyint(name string, props *NumericColumnProps) {
+	dataType := MysqlDataType{
+		Type: TINYINT,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type:          TINYINT,
-			Unique:        props.Unique,
-			Nullable:      props.Nullable,
-			PrimaryKey:    props.PrimaryKey,
-			Default:       props.Default,
-			AutoIncrement: props.AutoIncrement,
-			Unsigned:      props.Unsigned,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
@@ -261,44 +303,51 @@ func (c *MysqlColumns) Smallint(name string, props *NumericColumnProps) {
 }
 
 func (c *MysqlColumns) Boolean(name string, props *NumericColumnProps) {
+	dataType := MysqlDataType{
+		Type: BOOL,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type:          BOOL,
-			Nullable:      props.Nullable,
-			Default:       props.Default,
-			AutoIncrement: props.AutoIncrement,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
 }
 
 func (c *MysqlColumns) Float(name string, props *NumericColumnProps) {
+	dataType := MysqlDataType{
+		Type: FLOAT,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type:       FLOAT,
-			Nullable:   props.Nullable,
-			Default:    props.Default,
-			PrimaryKey: props.PrimaryKey,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
 }
 
 func (c *MysqlColumns) Double(name string, props *NumericColumnProps) {
+	dataType := MysqlDataType{
+		Type: DOUBLE,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &MysqlColumn{
-		Name: name,
-		Property: &MysqlDataType{
-			Type:       DOUBLE,
-			Size:       props.Size,
-			Precision:  props.Precision,
-			Nullable:   props.Nullable,
-			Default:    props.Default,
-			PrimaryKey: props.PrimaryKey,
-		},
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
