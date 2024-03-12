@@ -6,7 +6,7 @@ import (
 )
 
 func TestVarcharColumn(t *testing.T) {
-	column := CreateColumn("first_name", &MysqlDataType{
+	column := CreateColumn("first_name", &SQLTableProp{
 		Type: "varchar",
 		Size: 50,
 	})
@@ -24,7 +24,7 @@ func TestVarcharColumn(t *testing.T) {
 }
 
 func TestIntColumnWithAutoIncrement(t *testing.T) {
-	column := CreateColumn("ID", &MysqlDataType{
+	column := CreateColumn("ID", &SQLTableProp{
 		Type:          "int",
 		AutoIncrement: true,
 	})
@@ -43,7 +43,7 @@ func TestIntColumnWithAutoIncrement(t *testing.T) {
 }
 
 func TestUnsignedInt(t *testing.T) {
-	column := CreateColumn("ID", &MysqlDataType{
+	column := CreateColumn("ID", &SQLTableProp{
 		Type:     INT,
 		Unsigned: true,
 	})
@@ -100,7 +100,7 @@ func TestTextsColumn(t *testing.T) {
 	}
 
 	for _, s := range samples {
-		column := CreateColumn("name", &MysqlDataType{
+		column := CreateColumn("name", &SQLTableProp{
 			Type: SQLDataType(s.Type),
 			Size: s.Size,
 		})
@@ -146,7 +146,7 @@ func TestIntegersColumn(t *testing.T) {
 	}
 
 	for _, s := range samples {
-		column := CreateColumn("ID", &MysqlDataType{
+		column := CreateColumn("ID", &SQLTableProp{
 			Type: SQLDataType(s.Type),
 		})
 
@@ -163,7 +163,7 @@ func TestIntegersColumn(t *testing.T) {
 }
 
 func TestEnumWithDefault(t *testing.T) {
-	column := CreateColumn("role", &MysqlDataType{
+	column := CreateColumn("role", &SQLTableProp{
 		Type:        ENUM,
 		EnumOptions: []string{"admin", "employee", "supervisor"},
 		Default:     "admin",
@@ -195,7 +195,7 @@ func TestNotVarcharColumn(t *testing.T) {
 }
 
 func TestFloatWithNullable(t *testing.T) {
-	column := CreateColumn("mark", &MysqlDataType{
+	column := CreateColumn("mark", &SQLTableProp{
 		Type:     FLOAT,
 		Nullable: true,
 		Size:     53,
@@ -215,7 +215,7 @@ func TestFloatWithNullable(t *testing.T) {
 }
 
 func TestDoubleWithNullable(t *testing.T) {
-	column := CreateColumn("mark", &MysqlDataType{
+	column := CreateColumn("mark", &SQLTableProp{
 		Type:     DOUBLE,
 		Nullable: true,
 		Size:     53,

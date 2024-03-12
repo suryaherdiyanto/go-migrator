@@ -28,7 +28,7 @@ const (
 
 type MysqlColumn struct {
 	Name     string
-	Property *MysqlDataType
+	Property *SQLTableProp
 }
 
 type MysqlColumns struct {
@@ -109,7 +109,7 @@ func NewMysqlColumns() *MysqlColumns {
 	return &MysqlColumns{}
 }
 
-func fillProps(t *MysqlDataType, props interface{}) error {
+func fillProps(t *SQLTableProp, props interface{}) error {
 	switch p := props.(type) {
 	case TextColumnProps:
 		t.Unique = p.Unique
@@ -132,7 +132,7 @@ func fillProps(t *MysqlDataType, props interface{}) error {
 	}
 }
 func (c *MysqlColumns) Varchar(name string, length int, props *TextColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: VARCHAR,
 		Size: length,
 	}
@@ -150,7 +150,7 @@ func (c *MysqlColumns) Varchar(name string, length int, props *TextColumnProps) 
 }
 
 func (c *MysqlColumns) Char(name string, length int, props *TextColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: CHAR,
 		Size: length,
 	}
@@ -168,7 +168,7 @@ func (c *MysqlColumns) Char(name string, length int, props *TextColumnProps) {
 }
 
 func (c *MysqlColumns) Text(name string, props *TextColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: TEXT,
 	}
 
@@ -185,7 +185,7 @@ func (c *MysqlColumns) Text(name string, props *TextColumnProps) {
 }
 
 func (c *MysqlColumns) Date(name string, props *TextColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: DATE,
 	}
 
@@ -202,7 +202,7 @@ func (c *MysqlColumns) Date(name string, props *TextColumnProps) {
 }
 
 func (c *MysqlColumns) Timestamp(name string, props *TextColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: TIMESTAMP,
 	}
 
@@ -219,7 +219,7 @@ func (c *MysqlColumns) Timestamp(name string, props *TextColumnProps) {
 }
 
 func (c *MysqlColumns) DateTime(name string, props *TextColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: DATETIME,
 	}
 
@@ -236,7 +236,7 @@ func (c *MysqlColumns) DateTime(name string, props *TextColumnProps) {
 }
 
 func (c *MysqlColumns) Enum(name string, options []string, props *TextColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: ENUM,
 	}
 
@@ -253,7 +253,7 @@ func (c *MysqlColumns) Enum(name string, options []string, props *TextColumnProp
 }
 
 func (c *MysqlColumns) Int(name string, props *NumericColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: INT,
 	}
 
@@ -270,7 +270,7 @@ func (c *MysqlColumns) Int(name string, props *NumericColumnProps) {
 }
 
 func (c *MysqlColumns) Tinyint(name string, props *NumericColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: TINYINT,
 	}
 
@@ -288,7 +288,7 @@ func (c *MysqlColumns) Tinyint(name string, props *NumericColumnProps) {
 func (c *MysqlColumns) Smallint(name string, props *NumericColumnProps) {
 	col := &MysqlColumn{
 		Name: name,
-		Property: &MysqlDataType{
+		Property: &SQLTableProp{
 			Type:          MEDIUMINT,
 			Unique:        props.Unique,
 			Nullable:      props.Nullable,
@@ -303,7 +303,7 @@ func (c *MysqlColumns) Smallint(name string, props *NumericColumnProps) {
 }
 
 func (c *MysqlColumns) Boolean(name string, props *NumericColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: BOOL,
 	}
 
@@ -320,7 +320,7 @@ func (c *MysqlColumns) Boolean(name string, props *NumericColumnProps) {
 }
 
 func (c *MysqlColumns) Float(name string, props *NumericColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: FLOAT,
 	}
 
@@ -337,7 +337,7 @@ func (c *MysqlColumns) Float(name string, props *NumericColumnProps) {
 }
 
 func (c *MysqlColumns) Double(name string, props *NumericColumnProps) {
-	dataType := MysqlDataType{
+	dataType := SQLTableProp{
 		Type: DOUBLE,
 	}
 
@@ -353,7 +353,7 @@ func (c *MysqlColumns) Double(name string, props *NumericColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func CreateColumn(columnName string, property *MysqlDataType) *MysqlColumn {
+func CreateColumn(columnName string, property *SQLTableProp) *MysqlColumn {
 	return &MysqlColumn{
 		Name:     columnName,
 		Property: property,

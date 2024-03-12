@@ -10,7 +10,7 @@ import (
 
 type SQLDataType string
 
-type MysqlDataType struct {
+type SQLTableProp struct {
 	Type          SQLDataType
 	Size          int
 	Default       interface{}
@@ -32,7 +32,7 @@ func (mt *MysqlTable) ColumnLength() int {
 	return len(mt.Columns) - 1
 }
 
-func (o *MysqlDataType) PrintEnumValues() string {
+func (o *SQLTableProp) PrintEnumValues() string {
 	return "'" + strings.Join(o.EnumOptions, "', '") + "'"
 }
 
