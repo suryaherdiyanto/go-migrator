@@ -23,12 +23,12 @@ type SQLTableProp struct {
 	Precision     int
 }
 
-type MysqlTable struct {
+type Table struct {
 	Name    string
 	Columns []MysqlColumn
 }
 
-func (mt *MysqlTable) ColumnLength() int {
+func (mt *Table) ColumnLength() int {
 	return len(mt.Columns) - 1
 }
 
@@ -36,11 +36,11 @@ func (o *SQLTableProp) PrintEnumValues() string {
 	return "'" + strings.Join(o.EnumOptions, "', '") + "'"
 }
 
-func CreateTable(name string, tableColumns func(cols *MysqlColumns)) *MysqlTable {
+func CreateTable(name string, tableColumns func(cols *MysqlColumns)) *Table {
 	columns := NewMysqlColumns()
 	tableColumns(columns)
 
-	return &MysqlTable{
+	return &Table{
 		Name:    name,
 		Columns: columns.Columns,
 	}
@@ -50,7 +50,7 @@ func CreateIndex(indexName string, table string, columns []string) string {
 	return "CREATE INDEX " + indexName + " ON " + table + "(" + strings.Join(columns, ", ") + ");"
 }
 
-func (t *MysqlTable) Run(db *sql.DB) error {
+func (t *Table) Run(db *sql.DB) error {
 	buff := new(strings.Builder)
 	err := parseTableTemplate(buff, t)
 
@@ -64,7 +64,7 @@ func (t *MysqlTable) Run(db *sql.DB) error {
 	return err
 }
 
-func parseTableTemplate(w io.Writer, data *MysqlTable) error {
+func parseTableTemplate(w io.Writer, data *Table) error {
 	templatePath := "./template/mysql/create-table.go.tmpl"
 	return parseTemplate(w, data, "create-table.go.tmpl", templatePath)
 }
