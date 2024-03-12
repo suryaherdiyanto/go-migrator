@@ -6,11 +6,10 @@ import (
 )
 
 func TestVarcharColumn(t *testing.T) {
-	column := CreateColumn("first_name", &SQLTableProp{
-		Type: "varchar",
-		Size: 50,
-	})
-	stmt, err := column.ParseColumn()
+	columns := NewTableColumns()
+	columns.Varchar("first_name", 50, nil)
+
+	stmt, err := columns.Columns[0].ParseColumn()
 
 	if err != nil {
 		t.Error(err)
@@ -24,12 +23,10 @@ func TestVarcharColumn(t *testing.T) {
 }
 
 func TestIntColumnWithAutoIncrement(t *testing.T) {
-	column := CreateColumn("ID", &SQLTableProp{
-		Type:          "int",
-		AutoIncrement: true,
-	})
+	columns := NewTableColumns()
+	columns.Int("ID", &NumericColumnProps{AutoIncrement: true})
 
-	stmt, err := column.ParseColumn()
+	stmt, err := columns.Columns[0].ParseColumn()
 
 	if err != nil {
 		t.Error(err)
@@ -43,12 +40,9 @@ func TestIntColumnWithAutoIncrement(t *testing.T) {
 }
 
 func TestUnsignedInt(t *testing.T) {
-	column := CreateColumn("ID", &SQLTableProp{
-		Type:     INT,
-		Unsigned: true,
-	})
-
-	stmt, err := column.ParseColumn()
+	columns := NewTableColumns()
+	columns.Int("ID", &NumericColumnProps{Unsigned: true})
+	stmt, err := columns.Columns[0].ParseColumn()
 
 	if err != nil {
 		t.Error(err)
@@ -100,12 +94,22 @@ func TestTextsColumn(t *testing.T) {
 	}
 
 	for _, s := range samples {
-		column := CreateColumn("name", &SQLTableProp{
-			Type: SQLDataType(s.Type),
-			Size: s.Size,
-		})
-
-		stmt, err := column.ParseColumn()
+		columns := NewTableColumns()
+		switch s.Type {
+		case CHAR:
+			columns.Char("name", s.Size, nil)
+			break
+		case VARCHAR:
+			columns.Varchar("name", s.Size, nil)
+			break
+		case DATE:
+			columns.Date("name", nil)
+			break
+		case DATETIME:
+			columns.DateTime("name", nil)
+			break
+		}
+		stmt, err := columns.Columns[0].ParseColumn()
 
 		if err != nil {
 			t.Error(err)
@@ -146,11 +150,26 @@ func TestIntegersColumn(t *testing.T) {
 	}
 
 	for _, s := range samples {
-		column := CreateColumn("ID", &SQLTableProp{
-			Type: SQLDataType(s.Type),
-		})
+		columns := NewTableColumns()
+		switch s.Type {
+		case INT:
+			columns.Int("ID", nil)
+			break
+		case TINYINT:
+			columns.Tinyint("ID", nil)
+			break
+		case MEDIUMINT:
+			columns.Mediumint("ID", nil)
+			break
+		case BIGINT:
+			columns.Bigint("ID", nil)
+			break
+		case BOOL:
+			columns.Boolean("ID", nil)
+			break
+		}
 
-		stmt, err := column.ParseColumn()
+		stmt, err := columns.Columns[0].ParseColumn()
 
 		if err != nil {
 			t.Error(err)
@@ -163,13 +182,10 @@ func TestIntegersColumn(t *testing.T) {
 }
 
 func TestEnumWithDefault(t *testing.T) {
-	column := CreateColumn("role", &SQLTableProp{
-		Type:        ENUM,
-		EnumOptions: []string{"admin", "employee", "supervisor"},
-		Default:     "admin",
-	})
+	columns := NewTableColumns()
+	columns.Enum("role", []string{"admin", "employee", "supervisor"}, &EnumColumnProps{Default: "admin"})
 
-	stmt, err := column.ParseColumn()
+	stmt, err := columns.Columns[0].ParseColumn()
 
 	if err != nil {
 		t.Error(err)
@@ -195,13 +211,10 @@ func TestNotVarcharColumn(t *testing.T) {
 }
 
 func TestFloatWithNullable(t *testing.T) {
-	column := CreateColumn("mark", &SQLTableProp{
-		Type:     FLOAT,
-		Nullable: true,
-		Size:     53,
-	})
+	columns := NewTableColumns()
+	columns.Float("mark", &NumericColumnProps{Nullable: true, Size: 53})
 
-	stmt, err := column.ParseColumn()
+	stmt, err := columns.Columns[0].ParseColumn()
 
 	if err != nil {
 		t.Error(err)
@@ -215,13 +228,10 @@ func TestFloatWithNullable(t *testing.T) {
 }
 
 func TestDoubleWithNullable(t *testing.T) {
-	column := CreateColumn("mark", &SQLTableProp{
-		Type:     DOUBLE,
-		Nullable: true,
-		Size:     53,
-	})
+	columns := NewTableColumns()
+	columns.Double("mark", &NumericColumnProps{Nullable: true, Size: 53})
 
-	stmt, err := column.ParseColumn()
+	stmt, err := columns.Columns[0].ParseColumn()
 
 	if err != nil {
 		t.Error(err)
@@ -264,7 +274,7 @@ func TestCreateTable(t *testing.T) {
 		cols.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
 		cols.Date("dob", nil)
 		cols.Text("bio", nil)
-		cols.Enum("sex", []string{"l", "p"}, &TextColumnProps{Default: "p"})
+		cols.Enum("sex", []string{"l", "p"}, &EnumColumnProps{Default: "p"})
 	})
 	defer db.Close()
 

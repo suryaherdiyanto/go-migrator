@@ -54,6 +54,11 @@ type NumericColumnProps struct {
 	Size          int
 }
 
+type EnumColumnProps struct {
+	Default  interface{}
+	Nullable bool
+}
+
 func (c *TableColumn) ParseColumn() (string, error) {
 	col := &TableColumn{
 		Name:     c.Name,
@@ -111,13 +116,12 @@ func NewTableColumns() *TableColumns {
 
 func fillProps(t *SQLTableProp, props interface{}) error {
 	switch p := props.(type) {
-	case TextColumnProps:
+	case *TextColumnProps:
 		t.Unique = p.Unique
 		t.Default = p.Default
 		t.PrimaryKey = p.PrimaryKey
 		t.Nullable = p.Nullable
-		return nil
-	case NumericColumnProps:
+	case *NumericColumnProps:
 		t.Unique = p.Unique
 		t.Default = p.Default
 		t.PrimaryKey = p.PrimaryKey
@@ -125,11 +129,15 @@ func fillProps(t *SQLTableProp, props interface{}) error {
 		t.AutoIncrement = p.AutoIncrement
 		t.Unsigned = p.Unsigned
 		t.Precision = p.Precision
-		return nil
+		t.Size = p.Size
+	case *EnumColumnProps:
+		t.Default = p.Default
+		t.Nullable = p.Nullable
 	default:
 		return errors.New(fmt.Sprintf("Invalid type %v", props))
-
 	}
+
+	return nil
 }
 func (c *TableColumns) Varchar(name string, length int, props *TextColumnProps) {
 	dataType := SQLTableProp{
@@ -235,9 +243,10 @@ func (c *TableColumns) DateTime(name string, props *TextColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *TableColumns) Enum(name string, options []string, props *TextColumnProps) {
+func (c *TableColumns) Enum(name string, options []string, props *EnumColumnProps) {
 	dataType := SQLTableProp{
-		Type: ENUM,
+		Type:        ENUM,
+		EnumOptions: options,
 	}
 
 	if props != nil {
@@ -285,18 +294,35 @@ func (c *TableColumns) Tinyint(name string, props *NumericColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *TableColumns) Smallint(name string, props *NumericColumnProps) {
+func (c *TableColumns) Mediumint(name string, props *NumericColumnProps) {
+	dataType := SQLTableProp{
+		Type: MEDIUMINT,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
 	col := &TableColumn{
-		Name: name,
-		Property: &SQLTableProp{
-			Type:          MEDIUMINT,
-			Unique:        props.Unique,
-			Nullable:      props.Nullable,
-			PrimaryKey:    props.PrimaryKey,
-			Default:       props.Default,
-			AutoIncrement: props.AutoIncrement,
-			Unsigned:      props.Unsigned,
-		},
+		Name:     name,
+		Property: &dataType,
+	}
+
+	c.Columns = append(c.Columns, *col)
+}
+
+func (c *TableColumns) Bigint(name string, props *NumericColumnProps) {
+	dataType := SQLTableProp{
+		Type: BIGINT,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
+	col := &TableColumn{
+		Name:     name,
+		Property: &dataType,
 	}
 
 	c.Columns = append(c.Columns, *col)
@@ -351,11 +377,4 @@ func (c *TableColumns) Double(name string, props *NumericColumnProps) {
 	}
 
 	c.Columns = append(c.Columns, *col)
-}
-
-func CreateColumn(columnName string, property *SQLTableProp) *TableColumn {
-	return &TableColumn{
-		Name:     columnName,
-		Property: property,
-	}
 }
