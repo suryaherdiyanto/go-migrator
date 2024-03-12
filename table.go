@@ -25,7 +25,7 @@ type SQLTableProp struct {
 
 type Table struct {
 	Name    string
-	Columns []MysqlColumn
+	Columns []TableColumn
 }
 
 func (mt *Table) ColumnLength() int {
@@ -36,8 +36,8 @@ func (o *SQLTableProp) PrintEnumValues() string {
 	return "'" + strings.Join(o.EnumOptions, "', '") + "'"
 }
 
-func CreateTable(name string, tableColumns func(cols *MysqlColumns)) *Table {
-	columns := NewMysqlColumns()
+func CreateTable(name string, tableColumns func(cols *TableColumns)) *Table {
+	columns := NewTableColumns()
 	tableColumns(columns)
 
 	return &Table{

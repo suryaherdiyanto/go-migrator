@@ -235,7 +235,7 @@ func TestDoubleWithNullable(t *testing.T) {
 }
 
 func TestCreateTableParsing(t *testing.T) {
-	table := CreateTable("users", func(cols *MysqlColumns) {
+	table := CreateTable("users", func(cols *TableColumns) {
 		cols.Int("ID", &NumericColumnProps{AutoIncrement: true})
 		cols.Varchar("first_name", 50, nil)
 		cols.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
@@ -258,7 +258,7 @@ func TestCreateTable(t *testing.T) {
 		t.Error(err)
 	}
 
-	table := CreateTable("users", func(cols *MysqlColumns) {
+	table := CreateTable("users", func(cols *TableColumns) {
 		cols.Int("ID", &NumericColumnProps{AutoIncrement: true})
 		cols.Varchar("first_name", 50, nil)
 		cols.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
@@ -295,7 +295,7 @@ func TestCreateIndex(t *testing.T) {
 }
 
 func TestCreateTableFunc(t *testing.T) {
-	table := CreateTable("users", func(cols *MysqlColumns) {
+	table := CreateTable("users", func(cols *TableColumns) {
 		cols.Varchar("first_name", 50, &TextColumnProps{})
 		cols.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
 	})
@@ -315,7 +315,7 @@ func TestCreateTableFuncRun(t *testing.T) {
 		t.Error(err)
 	}
 
-	table := CreateTable("items", func(cols *MysqlColumns) {
+	table := CreateTable("items", func(cols *TableColumns) {
 		cols.Varchar("name", 50, nil)
 		cols.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
 		cols.Float("mark", nil)

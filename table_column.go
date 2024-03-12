@@ -26,13 +26,13 @@ const (
 	TIMESTAMP SQLDataType = "timestamp"
 )
 
-type MysqlColumn struct {
+type TableColumn struct {
 	Name     string
 	Property *SQLTableProp
 }
 
-type MysqlColumns struct {
-	Columns []MysqlColumn
+type TableColumns struct {
+	Columns []TableColumn
 }
 
 type TextColumnProps struct {
@@ -54,8 +54,8 @@ type NumericColumnProps struct {
 	Size          int
 }
 
-func (c *MysqlColumn) ParseColumn() (string, error) {
-	col := &MysqlColumn{
+func (c *TableColumn) ParseColumn() (string, error) {
+	col := &TableColumn{
 		Name:     c.Name,
 		Property: c.Property,
 	}
@@ -83,7 +83,7 @@ func IsNumericColumn(t SQLDataType) bool {
 	return slices.Index(types, t) >= 0
 }
 
-func parseColumnTemplate(w io.Writer, data *MysqlColumn) error {
+func parseColumnTemplate(w io.Writer, data *TableColumn) error {
 	templatePath := "./template/types/" + string(data.Property.Type) + ".go.tmpl"
 	templateName := string(data.Property.Type) + ".go.tmpl"
 
@@ -105,8 +105,8 @@ func parseColumnTemplate(w io.Writer, data *MysqlColumn) error {
 	return parseTemplate(w, data, templateName, templatePath)
 }
 
-func NewMysqlColumns() *MysqlColumns {
-	return &MysqlColumns{}
+func NewTableColumns() *TableColumns {
+	return &TableColumns{}
 }
 
 func fillProps(t *SQLTableProp, props interface{}) error {
@@ -131,7 +131,7 @@ func fillProps(t *SQLTableProp, props interface{}) error {
 
 	}
 }
-func (c *MysqlColumns) Varchar(name string, length int, props *TextColumnProps) {
+func (c *TableColumns) Varchar(name string, length int, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: VARCHAR,
 		Size: length,
@@ -141,7 +141,7 @@ func (c *MysqlColumns) Varchar(name string, length int, props *TextColumnProps) 
 		fillProps(&dataType, props)
 	}
 
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -149,7 +149,7 @@ func (c *MysqlColumns) Varchar(name string, length int, props *TextColumnProps) 
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) Char(name string, length int, props *TextColumnProps) {
+func (c *TableColumns) Char(name string, length int, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: CHAR,
 		Size: length,
@@ -159,7 +159,7 @@ func (c *MysqlColumns) Char(name string, length int, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -167,7 +167,7 @@ func (c *MysqlColumns) Char(name string, length int, props *TextColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) Text(name string, props *TextColumnProps) {
+func (c *TableColumns) Text(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: TEXT,
 	}
@@ -176,7 +176,7 @@ func (c *MysqlColumns) Text(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -184,7 +184,7 @@ func (c *MysqlColumns) Text(name string, props *TextColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) Date(name string, props *TextColumnProps) {
+func (c *TableColumns) Date(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: DATE,
 	}
@@ -193,7 +193,7 @@ func (c *MysqlColumns) Date(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -201,7 +201,7 @@ func (c *MysqlColumns) Date(name string, props *TextColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) Timestamp(name string, props *TextColumnProps) {
+func (c *TableColumns) Timestamp(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: TIMESTAMP,
 	}
@@ -210,7 +210,7 @@ func (c *MysqlColumns) Timestamp(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -218,7 +218,7 @@ func (c *MysqlColumns) Timestamp(name string, props *TextColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) DateTime(name string, props *TextColumnProps) {
+func (c *TableColumns) DateTime(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: DATETIME,
 	}
@@ -227,7 +227,7 @@ func (c *MysqlColumns) DateTime(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -235,7 +235,7 @@ func (c *MysqlColumns) DateTime(name string, props *TextColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) Enum(name string, options []string, props *TextColumnProps) {
+func (c *TableColumns) Enum(name string, options []string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: ENUM,
 	}
@@ -244,7 +244,7 @@ func (c *MysqlColumns) Enum(name string, options []string, props *TextColumnProp
 		fillProps(&dataType, props)
 	}
 
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -252,7 +252,7 @@ func (c *MysqlColumns) Enum(name string, options []string, props *TextColumnProp
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) Int(name string, props *NumericColumnProps) {
+func (c *TableColumns) Int(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: INT,
 	}
@@ -261,7 +261,7 @@ func (c *MysqlColumns) Int(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -269,7 +269,7 @@ func (c *MysqlColumns) Int(name string, props *NumericColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) Tinyint(name string, props *NumericColumnProps) {
+func (c *TableColumns) Tinyint(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: TINYINT,
 	}
@@ -277,7 +277,7 @@ func (c *MysqlColumns) Tinyint(name string, props *NumericColumnProps) {
 	if props != nil {
 		fillProps(&dataType, props)
 	}
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -285,8 +285,8 @@ func (c *MysqlColumns) Tinyint(name string, props *NumericColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) Smallint(name string, props *NumericColumnProps) {
-	col := &MysqlColumn{
+func (c *TableColumns) Smallint(name string, props *NumericColumnProps) {
+	col := &TableColumn{
 		Name: name,
 		Property: &SQLTableProp{
 			Type:          MEDIUMINT,
@@ -302,7 +302,7 @@ func (c *MysqlColumns) Smallint(name string, props *NumericColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) Boolean(name string, props *NumericColumnProps) {
+func (c *TableColumns) Boolean(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: BOOL,
 	}
@@ -311,7 +311,7 @@ func (c *MysqlColumns) Boolean(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -319,7 +319,7 @@ func (c *MysqlColumns) Boolean(name string, props *NumericColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) Float(name string, props *NumericColumnProps) {
+func (c *TableColumns) Float(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: FLOAT,
 	}
@@ -328,7 +328,7 @@ func (c *MysqlColumns) Float(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -336,7 +336,7 @@ func (c *MysqlColumns) Float(name string, props *NumericColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func (c *MysqlColumns) Double(name string, props *NumericColumnProps) {
+func (c *TableColumns) Double(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: DOUBLE,
 	}
@@ -345,7 +345,7 @@ func (c *MysqlColumns) Double(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &MysqlColumn{
+	col := &TableColumn{
 		Name:     name,
 		Property: &dataType,
 	}
@@ -353,8 +353,8 @@ func (c *MysqlColumns) Double(name string, props *NumericColumnProps) {
 	c.Columns = append(c.Columns, *col)
 }
 
-func CreateColumn(columnName string, property *SQLTableProp) *MysqlColumn {
-	return &MysqlColumn{
+func CreateColumn(columnName string, property *SQLTableProp) *TableColumn {
+	return &TableColumn{
 		Name:     columnName,
 		Property: property,
 	}
