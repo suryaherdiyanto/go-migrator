@@ -10,20 +10,24 @@ import (
 )
 
 const (
-	VARCHAR   SQLDataType = "varchar"
-	CHAR      SQLDataType = "char"
-	BIGINT    SQLDataType = "bigint"
-	INT       SQLDataType = "int"
-	TINYINT   SQLDataType = "tinyint"
-	MEDIUMINT SQLDataType = "mediumint"
-	BOOL      SQLDataType = "bool"
-	FLOAT     SQLDataType = "float"
-	DOUBLE    SQLDataType = "double"
-	TEXT      SQLDataType = "text"
-	DATE      SQLDataType = "date"
-	ENUM      SQLDataType = "enum"
-	DATETIME  SQLDataType = "datetime"
-	TIMESTAMP SQLDataType = "timestamp"
+	VARCHAR          SQLDataType = "varchar"
+	CHAR             SQLDataType = "char"
+	BIGINT           SQLDataType = "bigint"
+	INT              SQLDataType = "int"
+	TINYINT          SQLDataType = "tinyint"
+	MEDIUMINT        SQLDataType = "mediumint"
+	SERIAL           SQLDataType = "serial"
+	BIGSERIAL        SQLDataType = "bigserial"
+	BOOL             SQLDataType = "bool"
+	FLOAT            SQLDataType = "float"
+	DOUBLE           SQLDataType = "double"
+	REAL             SQLDataType = "real"
+	DOUBLE_PRECISION SQLDataType = "double precision"
+	TEXT             SQLDataType = "text"
+	DATE             SQLDataType = "date"
+	ENUM             SQLDataType = "enum"
+	DATETIME         SQLDataType = "datetime"
+	TIMESTAMP        SQLDataType = "timestamp"
 )
 
 type TableColumn struct {
@@ -57,6 +61,7 @@ type NumericColumnProps struct {
 type EnumColumnProps struct {
 	Default  interface{}
 	Nullable bool
+	Dialect  SQLDialect
 }
 
 func (c *TableColumn) ParseColumn() (string, error) {
@@ -83,6 +88,10 @@ func IsNumericColumn(t SQLDataType) bool {
 		BOOL,
 		FLOAT,
 		DOUBLE,
+		REAL,
+		SERIAL,
+		BIGSERIAL,
+		DOUBLE_PRECISION,
 	}
 
 	return slices.Index(types, t) >= 0
@@ -133,6 +142,7 @@ func fillProps(t *SQLTableProp, props interface{}) error {
 	case *EnumColumnProps:
 		t.Default = p.Default
 		t.Nullable = p.Nullable
+		t.Dialect = p.Dialect
 	default:
 		return errors.New(fmt.Sprintf("Invalid type %v", props))
 	}
@@ -247,6 +257,7 @@ func (c *TableColumns) Enum(name string, options []string, props *EnumColumnProp
 	dataType := SQLTableProp{
 		Type:        ENUM,
 		EnumOptions: options,
+		Dialect:     MYSQL,
 	}
 
 	if props != nil {
@@ -268,6 +279,33 @@ func (c *TableColumns) Int(name string, props *NumericColumnProps) {
 
 	if props != nil {
 		fillProps(&dataType, props)
+	}
+
+	col := &TableColumn{
+		Name:     name,
+		Property: &dataType,
+	}
+
+	c.Columns = append(c.Columns, *col)
+}
+
+func (c *TableColumns) Serial(name string) {
+	dataType := SQLTableProp{
+		Type: SERIAL,
+	}
+
+	col := &TableColumn{
+		Name:     name,
+		Property: &dataType,
+	}
+
+	c.Columns = append(c.Columns, *col)
+}
+
+func (c *TableColumns) BigSerial(name string) {
+	dataType := SQLTableProp{
+		Type:     BIGSERIAL,
+		Unsigned: true,
 	}
 
 	col := &TableColumn{
@@ -365,6 +403,40 @@ func (c *TableColumns) Float(name string, props *NumericColumnProps) {
 func (c *TableColumns) Double(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: DOUBLE,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
+	col := &TableColumn{
+		Name:     name,
+		Property: &dataType,
+	}
+
+	c.Columns = append(c.Columns, *col)
+}
+
+func (c *TableColumns) Real(name string, props *NumericColumnProps) {
+	dataType := SQLTableProp{
+		Type: REAL,
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
+	}
+
+	col := &TableColumn{
+		Name:     name,
+		Property: &dataType,
+	}
+
+	c.Columns = append(c.Columns, *col)
+}
+
+func (c *TableColumns) DoublePrecision(name string, props *NumericColumnProps) {
+	dataType := SQLTableProp{
+		Type: DOUBLE_PRECISION,
 	}
 
 	if props != nil {

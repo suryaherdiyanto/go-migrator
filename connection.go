@@ -6,10 +6,11 @@ import (
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
-func NewConnection(dataSourceName string) (*sql.DB, error) {
-	db, err := sql.Open("mysql", dataSourceName)
+func NewConnection(driverName, dataSourceName string) (*sql.DB, error) {
+	db, err := sql.Open(driverName, dataSourceName)
 
 	if err != nil {
 		log.Printf("Could not make connection to the database: %v", err)

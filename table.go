@@ -10,6 +10,8 @@ import (
 
 type SQLDataType string
 
+type SQLDialect string
+
 type SQLTableProp struct {
 	Type          SQLDataType
 	Size          int
@@ -21,7 +23,13 @@ type SQLTableProp struct {
 	Unique        bool
 	PrimaryKey    bool
 	Precision     int
+	Dialect       SQLDialect
 }
+
+const (
+	POSTGRES SQLDialect = "postgres"
+	MYSQL    SQLDialect = "mysql"
+)
 
 type Table struct {
 	Name    string

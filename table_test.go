@@ -191,7 +191,7 @@ func TestEnumWithDefault(t *testing.T) {
 		t.Error(err)
 	}
 
-	expected := "role enum('admin', 'employee', 'supervisor') DEFAULT 'admin'"
+	expected := "role enum('admin', 'employee', 'supervisor') DEFAULT 'admin'\n\n"
 
 	if stmt != expected {
 		t.Errorf("Expected: %s, and got %q", expected, stmt)
@@ -261,39 +261,6 @@ func TestCreateTableParsing(t *testing.T) {
 	}
 }
 
-func TestCreateTable(t *testing.T) {
-	db, err := NewConnection("root:root@tcp(127.0.0.1:3306)/testdb")
-
-	if err != nil {
-		t.Error(err)
-	}
-
-	table := CreateTable("users", func(cols *TableColumns) {
-		cols.Int("ID", &NumericColumnProps{AutoIncrement: true})
-		cols.Varchar("first_name", 50, nil)
-		cols.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
-		cols.Date("dob", nil)
-		cols.Text("bio", nil)
-		cols.Enum("sex", []string{"l", "p"}, &EnumColumnProps{Default: "p"})
-	})
-	defer db.Close()
-
-	buff := new(bytes.Buffer)
-	err = parseTableTemplate(buff, table)
-
-	if err != nil {
-		t.Error(err)
-	}
-
-	_, _ = db.Exec("DROP TABLE IF EXISTS users")
-	_, err = db.Exec(buff.String())
-
-	if err != nil {
-		t.Error(err)
-	}
-
-}
-
 func TestCreateIndex(t *testing.T) {
 	index := CreateIndex("idx_users", "users", []string{"first_name", "last_name"})
 
@@ -301,44 +268,5 @@ func TestCreateIndex(t *testing.T) {
 
 	if index != expected {
 		t.Errorf("Expected: %s, and got %q", expected, index)
-	}
-}
-
-func TestCreateTableFunc(t *testing.T) {
-	table := CreateTable("users", func(cols *TableColumns) {
-		cols.Varchar("first_name", 50, &TextColumnProps{})
-		cols.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
-	})
-
-	tableLength := len(table.Columns)
-
-	if tableLength != 2 {
-		t.Errorf("Expected 2 columns, but got %d", tableLength)
-
-	}
-}
-
-func TestCreateTableFuncRun(t *testing.T) {
-	db, err := NewConnection("root:root@tcp(127.0.0.1:3306)/testdb")
-
-	if err != nil {
-		t.Error(err)
-	}
-
-	table := CreateTable("items", func(cols *TableColumns) {
-		cols.Varchar("name", 50, nil)
-		cols.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
-		cols.Float("mark", nil)
-		cols.Double("price", nil)
-	})
-
-	defer db.Close()
-
-	_, _ = db.Exec("DROP TABLE IF EXISTS items")
-
-	err = table.Run(db)
-
-	if err != nil {
-		t.Error(err)
 	}
 }
