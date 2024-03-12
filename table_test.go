@@ -235,28 +235,12 @@ func TestDoubleWithNullable(t *testing.T) {
 }
 
 func TestCreateTableParsing(t *testing.T) {
-	table := CreateTable("users", func() []MysqlColumn {
-		return []MysqlColumn{
-			*CreateColumn("ID", &MysqlDataType{
-				Type:          INT,
-				AutoIncrement: true,
-			}),
-			*CreateColumn("first_name", &MysqlDataType{
-				Type: VARCHAR,
-				Size: 50,
-			}),
-			*CreateColumn("last_name", &MysqlDataType{
-				Type:     VARCHAR,
-				Size:     50,
-				Nullable: true,
-			}),
-			*CreateColumn("dob", &MysqlDataType{
-				Type: DATE,
-			}),
-			*CreateColumn("bio", &MysqlDataType{
-				Type: TEXT,
-			}),
-		}
+	table := CreateTable("users", func(cols *MysqlColumns) {
+		cols.Int("ID", &NumericColumnProps{AutoIncrement: true})
+		cols.Varchar("first_name", 50, nil)
+		cols.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
+		cols.Date("dob", nil)
+		cols.Text("bio", nil)
 	})
 
 	buff := new(bytes.Buffer)
@@ -274,33 +258,13 @@ func TestCreateTable(t *testing.T) {
 		t.Error(err)
 	}
 
-	table := CreateTable("users", func() []MysqlColumn {
-		return []MysqlColumn{
-			*CreateColumn("ID", &MysqlDataType{
-				Type:          INT,
-				AutoIncrement: true,
-			}),
-			*CreateColumn("first_name", &MysqlDataType{
-				Type: VARCHAR,
-				Size: 50,
-			}),
-			*CreateColumn("last_name", &MysqlDataType{
-				Type:     VARCHAR,
-				Size:     50,
-				Nullable: true,
-			}),
-			*CreateColumn("dob", &MysqlDataType{
-				Type: DATE,
-			}),
-			*CreateColumn("bio", &MysqlDataType{
-				Type: TEXT,
-			}),
-			*CreateColumn("sex", &MysqlDataType{
-				Type:        ENUM,
-				EnumOptions: []string{"l", "p"},
-				Default:     "p",
-			}),
-		}
+	table := CreateTable("users", func(cols *MysqlColumns) {
+		cols.Int("ID", &NumericColumnProps{AutoIncrement: true})
+		cols.Varchar("first_name", 50, nil)
+		cols.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
+		cols.Date("dob", nil)
+		cols.Text("bio", nil)
+		cols.Enum("sex", []string{"l", "p"}, &TextColumnProps{Default: "p"})
 	})
 	defer db.Close()
 
@@ -331,7 +295,7 @@ func TestCreateIndex(t *testing.T) {
 }
 
 func TestCreateTableFunc(t *testing.T) {
-	table := CreateTableFunc("users", func(cols *MysqlColumns) {
+	table := CreateTable("users", func(cols *MysqlColumns) {
 		cols.Varchar("first_name", 50, &TextColumnProps{})
 		cols.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
 	})
@@ -351,11 +315,11 @@ func TestCreateTableFuncRun(t *testing.T) {
 		t.Error(err)
 	}
 
-	table := CreateTableFunc("items", func(cols *MysqlColumns) {
-		cols.Varchar("name", 50, &TextColumnProps{})
+	table := CreateTable("items", func(cols *MysqlColumns) {
+		cols.Varchar("name", 50, nil)
 		cols.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
-		cols.Float("mark", &NumericColumnProps{})
-		cols.Double("price", &NumericColumnProps{})
+		cols.Float("mark", nil)
+		cols.Double("price", nil)
 	})
 
 	defer db.Close()

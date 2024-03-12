@@ -36,14 +36,7 @@ func (o *MysqlDataType) PrintEnumValues() string {
 	return "'" + strings.Join(o.EnumOptions, "', '") + "'"
 }
 
-func CreateTable(name string, tableColumns func() []MysqlColumn) *MysqlTable {
-	return &MysqlTable{
-		Name:    name,
-		Columns: tableColumns(),
-	}
-}
-
-func CreateTableFunc(name string, tableColumns func(cols *MysqlColumns)) *MysqlTable {
+func CreateTable(name string, tableColumns func(cols *MysqlColumns)) *MysqlTable {
 	columns := NewMysqlColumns()
 	tableColumns(columns)
 
