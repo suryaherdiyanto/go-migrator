@@ -32,8 +32,9 @@ const (
 )
 
 type Table struct {
-	Name    string
-	Columns []TableColumn
+	Name           string
+	Columns        []TableColumn
+	EnumStatements []string
 }
 
 func (mt *Table) ColumnLength() int {
@@ -63,10 +64,23 @@ func (t *Table) Run(db *sql.DB) error {
 		return err
 	}
 
+	if len(t.EnumStatements) > 0 {
+		for _, enum := range t.EnumStatements {
+			_, err = db.Exec(enum)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
 	_, err = db.Exec(buff.String())
 	defer db.Close()
 
 	return err
+}
+
+func (t *Table) CreateEnum(name string, options []string) string {
+	return "DROP TYPE IF EXISTS " + name + "; CREATE TYPE " + name + " AS ENUM('" + strings.Join(options, "', '") + "');"
 }
 
 func parseTableTemplate(w io.Writer, data *Table) error {

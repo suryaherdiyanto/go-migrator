@@ -1,11 +1,9 @@
 package gomigrator
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"slices"
-	"strings"
 )
 
 const (
@@ -59,19 +57,17 @@ type EnumColumnProps struct {
 	Dialect  SQLDialect
 }
 
-func (c *TableColumn) ParseColumn() (string, error) {
+type SQLColumn interface {
+	ParseColumn() string
+}
+
+func (c *TableColumn) ParseColumn() string {
 	col := &TableColumn{
 		Name:     c.Name,
 		Property: c.Property,
 	}
 
-	w := new(bytes.Buffer)
-	err := parseColumnTemplate(w, col)
-	if err != nil {
-		return "", err
-	}
-
-	return strings.Replace(w.String(), "\n", "", 1), nil
+	return columnParser(col)
 }
 
 func (t *Table) AddColumn(name string, props SQLTableProp) {
@@ -119,6 +115,49 @@ func parseColumnTemplate(w io.Writer, data *TableColumn) error {
 	}
 
 	return parseTemplate(w, data, templateName, templatePath)
+}
+
+func columnParser(col *TableColumn) string {
+	stmt := col.Name + " " + string(col.Property.Type)
+
+	if size := col.Property.Size; size > 0 {
+		if precision := col.Property.Precision; precision > 0 {
+			stmt += fmt.Sprintf("(%d, %d)", size, precision)
+		} else {
+			stmt += fmt.Sprintf("(%d)", size)
+		}
+	}
+
+	if col.Property.Type == ENUM {
+		stmt += "(" + col.Property.PrintEnumValues() + ")"
+	}
+
+	if col.Property.AutoIncrement {
+		stmt += " AUTO_INCREMENT PRIMARY KEY"
+	}
+
+	if col.Property.Unsigned {
+		stmt += " UNSIGNED"
+	}
+
+	if col.Property.Unique {
+		stmt += " UNIQUE"
+	}
+
+	if col.Property.PrimaryKey {
+		stmt += " PRIMARY KEY"
+	}
+
+	if col.Property.Nullable {
+		stmt += " NULL"
+	}
+
+	if col.Property.Default != nil {
+		stmt += " DEFAULT " + fmt.Sprintf("'%v'", col.Property.Default)
+
+	}
+
+	return stmt
 }
 
 func fillProps(t *SQLTableProp, props interface{}) error {
@@ -231,6 +270,12 @@ func (t *Table) Enum(name string, options []string, props *EnumColumnProps) {
 
 	if props != nil {
 		fillProps(&dataType, props)
+	}
+
+	if dataType.Dialect == POSTGRES {
+		enumType := t.Name + "_" + name + "_type"
+		t.EnumStatements = append(t.EnumStatements, t.CreateEnum(enumType, options))
+		dataType.Type = SQLDataType(enumType)
 	}
 
 	t.AddColumn(name, dataType)

@@ -10,11 +10,7 @@ func TestVarcharColumn(t *testing.T) {
 		t.Varchar("first_name", 50, nil)
 	})
 
-	stmt, err := table.Columns[0].ParseColumn()
-
-	if err != nil {
-		t.Error(err)
-	}
+	stmt := table.Columns[0].ParseColumn()
 
 	expected := "first_name varchar(50)"
 
@@ -28,11 +24,7 @@ func TestIntColumnWithAutoIncrement(t *testing.T) {
 		t.Int("ID", &NumericColumnProps{AutoIncrement: true})
 	})
 
-	stmt, err := table.Columns[0].ParseColumn()
-
-	if err != nil {
-		t.Error(err)
-	}
+	stmt := table.Columns[0].ParseColumn()
 
 	expected := "ID int AUTO_INCREMENT PRIMARY KEY"
 
@@ -45,11 +37,7 @@ func TestUnsignedInt(t *testing.T) {
 	table := CreateTable("users", func(t *Table) {
 		t.Int("ID", &NumericColumnProps{Unsigned: true})
 	})
-	stmt, err := table.Columns[0].ParseColumn()
-
-	if err != nil {
-		t.Error(err)
-	}
+	stmt := table.Columns[0].ParseColumn()
 
 	expected := "ID int UNSIGNED"
 
@@ -109,11 +97,7 @@ func TestTextsColumn(t *testing.T) {
 				t.DateTime("name", nil)
 			}
 		})
-		stmt, err := table.Columns[0].ParseColumn()
-
-		if err != nil {
-			t.Error(err)
-		}
+		stmt := table.Columns[0].ParseColumn()
 
 		if stmt != s.Expected {
 			t.Errorf("Expected: %s, but got %q", s.Expected, stmt)
@@ -165,11 +149,7 @@ func TestIntegersColumn(t *testing.T) {
 			}
 		})
 
-		stmt, err := table.Columns[0].ParseColumn()
-
-		if err != nil {
-			t.Error(err)
-		}
+		stmt := table.Columns[0].ParseColumn()
 
 		if stmt != s.Expected {
 			t.Errorf("Expected: %s, but got %q", s.Expected, stmt)
@@ -182,13 +162,9 @@ func TestEnumWithDefault(t *testing.T) {
 		t.Enum("role", []string{"admin", "employee", "supervisor"}, &EnumColumnProps{Default: "admin"})
 	})
 
-	stmt, err := table.Columns[0].ParseColumn()
+	stmt := table.Columns[0].ParseColumn()
 
-	if err != nil {
-		t.Error(err)
-	}
-
-	expected := "role enum('admin', 'employee', 'supervisor') DEFAULT 'admin'\n\n"
+	expected := "role enum('admin', 'employee', 'supervisor') DEFAULT 'admin'"
 
 	if stmt != expected {
 		t.Errorf("Expected: %s, and got %q", expected, stmt)
@@ -212,11 +188,7 @@ func TestFloatWithNullable(t *testing.T) {
 		t.Float("mark", &NumericColumnProps{Nullable: true, Size: 53})
 	})
 
-	stmt, err := columns.Columns[0].ParseColumn()
-
-	if err != nil {
-		t.Error(err)
-	}
+	stmt := columns.Columns[0].ParseColumn()
 
 	expected := "mark float(53) NULL"
 
@@ -230,11 +202,7 @@ func TestDoubleWithNullable(t *testing.T) {
 		t.Double("mark", &NumericColumnProps{Nullable: true, Size: 53})
 	})
 
-	stmt, err := table.Columns[0].ParseColumn()
-
-	if err != nil {
-		t.Error(err)
-	}
+	stmt := table.Columns[0].ParseColumn()
 
 	expected := "mark double(53) NULL"
 
