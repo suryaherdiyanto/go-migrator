@@ -2,7 +2,6 @@ package gomigrator
 
 import (
 	"fmt"
-	"io"
 	"slices"
 )
 
@@ -93,28 +92,6 @@ func IsNumericColumn(t SQLDataType) bool {
 	}
 
 	return slices.Index(types, t) >= 0
-}
-
-func parseColumnTemplate(w io.Writer, data *TableColumn) error {
-	templatePath := "./template/types/" + string(data.Property.Type) + ".go.tmpl"
-	templateName := string(data.Property.Type) + ".go.tmpl"
-
-	if IsNumericColumn(data.Property.Type) {
-		templatePath = "./template/types/int.go.tmpl"
-		templateName = "int.go.tmpl"
-
-		if data.Property.Type == FLOAT || data.Property.Type == DOUBLE {
-			templatePath = "./template/types/float.go.tmpl"
-			templateName = "float.go.tmpl"
-		}
-	}
-
-	if IsTextColumn(data.Property.Type) {
-		templatePath = "./template/types/varchar.go.tmpl"
-		templateName = "varchar.go.tmpl"
-	}
-
-	return parseTemplate(w, data, templateName, templatePath)
 }
 
 func columnParser(col *TableColumn) string {
