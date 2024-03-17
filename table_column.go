@@ -87,6 +87,18 @@ func IsNumericColumn(t SQLDataType) bool {
 	return slices.Index(types, t) >= 0
 }
 
+func IsTextColumn(t SQLDataType) bool {
+	types := []SQLDataType{
+		CHAR,
+		VARCHAR,
+		TEXT,
+		DATE,
+		DATETIME,
+	}
+
+	return slices.Index(types, t) >= 0
+}
+
 func columnParser(col *TableColumn) string {
 	stmt := col.Name + " " + string(col.Property.Type)
 

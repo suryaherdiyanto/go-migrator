@@ -3,7 +3,6 @@ package gomigrator
 import (
 	"database/sql"
 	"io"
-	"slices"
 	"strings"
 	"text/template"
 )
@@ -103,16 +102,4 @@ func parseTemplate(w io.Writer, data any, name string, path string) error {
 	}
 
 	return tmpl.Execute(w, data)
-}
-
-func IsTextColumn(t SQLDataType) bool {
-	types := []SQLDataType{
-		CHAR,
-		VARCHAR,
-		TEXT,
-		DATE,
-		DATETIME,
-	}
-
-	return slices.Index(types, t) >= 0
 }
