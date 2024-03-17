@@ -259,6 +259,29 @@ func TestBigIncrement(t *testing.T) {
 	}
 }
 
+func TestUuid(t *testing.T) {
+	table := CreateTable("users", func(table *Table) {
+		table.Uuid("ID", &TextColumnProps{PrimaryKey: true})
+	}, POSTGRES)
+
+	stmt := table.Columns[0].ParseColumn()
+	expected := "ID uuid PRIMARY KEY DEFAULT gen_random_uuid()"
+	if condition := stmt != expected; condition {
+		t.Errorf("Expected: %s, and got %q", expected, stmt)
+	}
+
+	table = CreateTable("users", func(table *Table) {
+		table.Uuid("ID", &TextColumnProps{PrimaryKey: true})
+	}, MYSQL)
+
+	stmt = table.Columns[0].ParseColumn()
+	expected = "ID varchar(36) PRIMARY KEY DEFAULT uuid()"
+
+	if condition := stmt != expected; condition {
+		t.Errorf("Expected: %s, and got %q", expected, stmt)
+	}
+}
+
 func TestCreateTableParsing(t *testing.T) {
 	table := CreateTable("users", func(t *Table) {
 		t.Int("ID", &NumericColumnProps{AutoIncrement: true})

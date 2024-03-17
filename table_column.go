@@ -24,6 +24,7 @@ const (
 	ENUM             SQLDataType = "enum"
 	DATETIME         SQLDataType = "datetime"
 	TIMESTAMP        SQLDataType = "timestamp"
+	UUID             SQLDataType = "uuid"
 )
 
 type TableColumn struct {
@@ -131,8 +132,7 @@ func columnParser(col *TableColumn) string {
 	}
 
 	if col.Property.Default != nil {
-		stmt += " DEFAULT " + fmt.Sprintf("'%v'", col.Property.Default)
-
+		stmt += " DEFAULT " + fmt.Sprintf("%v", col.Property.Default)
 	}
 
 	return stmt
@@ -416,6 +416,23 @@ func (t *Table) BigIncrement(name string) {
 		dataType.Type = BIGINT
 		dataType.PrimaryKey = false
 		dataType.AutoIncrement = true
+	}
+
+	t.AddColumn(name, dataType)
+}
+
+func (t *Table) Uuid(name string, props *TextColumnProps) {
+	dataType := SQLTableProp{
+		Type:       UUID,
+		Default:    "gen_random_uuid()",
+		PrimaryKey: props.PrimaryKey,
+		Unique:     props.Unique,
+	}
+
+	if t.Dialect == MYSQL {
+		dataType.Type = VARCHAR
+		dataType.Default = "uuid()"
+		dataType.Size = 36
 	}
 
 	t.AddColumn(name, dataType)
