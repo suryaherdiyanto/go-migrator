@@ -159,7 +159,6 @@ func fillProps(t *SQLTableProp, props interface{}) error {
 	case *EnumColumnProps:
 		t.Default = p.Default
 		t.Nullable = p.Nullable
-		t.Dialect = p.Dialect
 		return nil
 	}
 
@@ -243,14 +242,13 @@ func (t *Table) Enum(name string, options []string, props *EnumColumnProps) {
 	dataType := SQLTableProp{
 		Type:        ENUM,
 		EnumOptions: options,
-		Dialect:     MYSQL,
 	}
 
 	if props != nil {
 		fillProps(&dataType, props)
 	}
 
-	if dataType.Dialect == POSTGRES {
+	if t.Dialect == POSTGRES {
 		enumType := t.Name + "_" + name + "_type"
 		t.EnumStatements = append(t.EnumStatements, t.CreateEnum(enumType, options))
 		dataType.Type = SQLDataType(enumType)

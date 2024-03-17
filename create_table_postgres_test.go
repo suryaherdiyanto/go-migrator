@@ -15,9 +15,9 @@ func TestCreateTablePostgres(t *testing.T) {
 		t.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
 		t.Real("mark", nil)
 		t.DoublePrecision("price", nil)
-		t.Enum("status", []string{"active", "inactive"}, &EnumColumnProps{Default: "inactive", Dialect: POSTGRES})
+		t.Enum("status", []string{"active", "inactive"}, &EnumColumnProps{Default: "inactive"})
 		t.Text("description", nil)
-	})
+	}, POSTGRES)
 
 	defer db.Close()
 

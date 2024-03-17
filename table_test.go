@@ -8,7 +8,7 @@ import (
 func TestVarcharColumn(t *testing.T) {
 	table := CreateTable("users", func(t *Table) {
 		t.Varchar("first_name", 50, nil)
-	})
+	}, MYSQL)
 
 	stmt := table.Columns[0].ParseColumn()
 
@@ -22,7 +22,7 @@ func TestVarcharColumn(t *testing.T) {
 func TestIntColumnWithAutoIncrement(t *testing.T) {
 	table := CreateTable("users", func(t *Table) {
 		t.Int("ID", &NumericColumnProps{AutoIncrement: true})
-	})
+	}, MYSQL)
 
 	stmt := table.Columns[0].ParseColumn()
 
@@ -36,7 +36,7 @@ func TestIntColumnWithAutoIncrement(t *testing.T) {
 func TestUnsignedInt(t *testing.T) {
 	table := CreateTable("users", func(t *Table) {
 		t.Int("ID", &NumericColumnProps{Unsigned: true})
-	})
+	}, MYSQL)
 	stmt := table.Columns[0].ParseColumn()
 
 	expected := "ID int UNSIGNED"
@@ -96,7 +96,7 @@ func TestTextsColumn(t *testing.T) {
 			case DATETIME:
 				t.DateTime("name", nil)
 			}
-		})
+		}, MYSQL)
 		stmt := table.Columns[0].ParseColumn()
 
 		if stmt != s.Expected {
@@ -147,7 +147,7 @@ func TestIntegersColumn(t *testing.T) {
 			case BOOL:
 				t.Boolean("ID", nil)
 			}
-		})
+		}, MYSQL)
 
 		stmt := table.Columns[0].ParseColumn()
 
@@ -160,7 +160,7 @@ func TestIntegersColumn(t *testing.T) {
 func TestEnumWithDefault(t *testing.T) {
 	table := CreateTable("users", func(t *Table) {
 		t.Enum("role", []string{"admin", "employee", "supervisor"}, &EnumColumnProps{Default: "admin"})
-	})
+	}, MYSQL)
 
 	stmt := table.Columns[0].ParseColumn()
 
@@ -186,7 +186,7 @@ func TestNotVarcharColumn(t *testing.T) {
 func TestFloatWithNullable(t *testing.T) {
 	columns := CreateTable("users", func(t *Table) {
 		t.Float("mark", &NumericColumnProps{Nullable: true, Size: 53})
-	})
+	}, MYSQL)
 
 	stmt := columns.Columns[0].ParseColumn()
 
@@ -200,7 +200,7 @@ func TestFloatWithNullable(t *testing.T) {
 func TestDoubleWithNullable(t *testing.T) {
 	table := CreateTable("users", func(t *Table) {
 		t.Double("mark", &NumericColumnProps{Nullable: true, Size: 53})
-	})
+	}, MYSQL)
 
 	stmt := table.Columns[0].ParseColumn()
 
@@ -218,7 +218,7 @@ func TestCreateTableParsing(t *testing.T) {
 		t.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
 		t.Date("dob", nil)
 		t.Text("bio", nil)
-	})
+	}, MYSQL)
 
 	buff := new(bytes.Buffer)
 	err := parseTableTemplate(buff, table)

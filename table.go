@@ -22,7 +22,6 @@ type SQLTableProp struct {
 	Unique        bool
 	PrimaryKey    bool
 	Precision     int
-	Dialect       SQLDialect
 }
 
 const (
@@ -34,6 +33,7 @@ type Table struct {
 	Name           string
 	Columns        []TableColumn
 	EnumStatements []string
+	Dialect        SQLDialect
 }
 
 func (mt *Table) ColumnLength() int {
@@ -44,8 +44,8 @@ func (o *SQLTableProp) PrintEnumValues() string {
 	return "'" + strings.Join(o.EnumOptions, "', '") + "'"
 }
 
-func CreateTable(name string, tableColumns func(table *Table)) *Table {
-	table := &Table{Name: name}
+func CreateTable(name string, tableColumns func(table *Table), dialect SQLDialect) *Table {
+	table := &Table{Name: name, Dialect: dialect}
 	tableColumns(table)
 
 	return table

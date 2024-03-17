@@ -18,7 +18,7 @@ func TestCreateTableMysql(t *testing.T) {
 		t.Double("price", nil)
 		t.Enum("status", []string{"active", "inactive"}, &EnumColumnProps{Default: "inactive"})
 		t.Text("description", nil)
-	})
+	}, MYSQL)
 
 	defer db.Close()
 
