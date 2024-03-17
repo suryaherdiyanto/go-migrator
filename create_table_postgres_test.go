@@ -9,14 +9,14 @@ func TestCreateTablePostgres(t *testing.T) {
 		t.Error(err)
 	}
 
-	table := CreateTable("items", func(cols *TableColumns) {
-		cols.Serial("id")
-		cols.Varchar("name", 50, nil)
-		cols.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
-		cols.Real("mark", nil)
-		cols.DoublePrecision("price", nil)
-		cols.Enum("status", []string{"active", "inactive"}, &EnumColumnProps{Default: "inactive", Dialect: POSTGRES})
-		cols.Text("description", nil)
+	table := CreateTable("items", func(t *Table) {
+		t.Serial("id")
+		t.Varchar("name", 50, nil)
+		t.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
+		t.Real("mark", nil)
+		t.DoublePrecision("price", nil)
+		t.Enum("status", []string{"active", "inactive"}, &EnumColumnProps{Default: "inactive", Dialect: POSTGRES})
+		t.Text("description", nil)
 	})
 
 	defer db.Close()

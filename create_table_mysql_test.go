@@ -11,13 +11,13 @@ func TestCreateTableMysql(t *testing.T) {
 		t.Error(err)
 	}
 
-	table := CreateTable("items", func(cols *TableColumns) {
-		cols.Varchar("name", 50, nil)
-		cols.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
-		cols.Float("mark", nil)
-		cols.Double("price", nil)
-		cols.Enum("status", []string{"active", "inactive"}, &EnumColumnProps{Default: "inactive"})
-		cols.Text("description", nil)
+	table := CreateTable("items", func(t *Table) {
+		t.Varchar("name", 50, nil)
+		t.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
+		t.Float("mark", nil)
+		t.Double("price", nil)
+		t.Enum("status", []string{"active", "inactive"}, &EnumColumnProps{Default: "inactive"})
+		t.Text("description", nil)
 	})
 
 	defer db.Close()

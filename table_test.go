@@ -24,10 +24,11 @@ func TestVarcharColumn(t *testing.T) {
 }
 
 func TestIntColumnWithAutoIncrement(t *testing.T) {
-	columns := NewTableColumns()
-	columns.Int("ID", &NumericColumnProps{AutoIncrement: true})
+	table := CreateTable("users", func(t *Table) {
+		t.Int("ID", &NumericColumnProps{AutoIncrement: true})
+	})
 
-	stmt, err := columns.Columns[0].ParseColumn()
+	stmt, err := table.Columns[0].ParseColumn()
 
 	if err != nil {
 		t.Error(err)
@@ -41,9 +42,10 @@ func TestIntColumnWithAutoIncrement(t *testing.T) {
 }
 
 func TestUnsignedInt(t *testing.T) {
-	columns := NewTableColumns()
-	columns.Int("ID", &NumericColumnProps{Unsigned: true})
-	stmt, err := columns.Columns[0].ParseColumn()
+	table := CreateTable("users", func(t *Table) {
+		t.Int("ID", &NumericColumnProps{Unsigned: true})
+	})
+	stmt, err := table.Columns[0].ParseColumn()
 
 	if err != nil {
 		t.Error(err)
@@ -95,22 +97,23 @@ func TestTextsColumn(t *testing.T) {
 	}
 
 	for _, s := range samples {
-		columns := NewTableColumns()
-		switch s.Type {
-		case CHAR:
-			columns.Char("name", s.Size, nil)
-			break
-		case VARCHAR:
-			columns.Varchar("name", s.Size, nil)
-			break
-		case DATE:
-			columns.Date("name", nil)
-			break
-		case DATETIME:
-			columns.DateTime("name", nil)
-			break
-		}
-		stmt, err := columns.Columns[0].ParseColumn()
+		table := CreateTable("users", func(t *Table) {
+			switch s.Type {
+			case CHAR:
+				t.Char("name", s.Size, nil)
+				break
+			case VARCHAR:
+				t.Varchar("name", s.Size, nil)
+				break
+			case DATE:
+				t.Date("name", nil)
+				break
+			case DATETIME:
+				t.DateTime("name", nil)
+				break
+			}
+		})
+		stmt, err := table.Columns[0].ParseColumn()
 
 		if err != nil {
 			t.Error(err)
@@ -151,26 +154,27 @@ func TestIntegersColumn(t *testing.T) {
 	}
 
 	for _, s := range samples {
-		columns := NewTableColumns()
-		switch s.Type {
-		case INT:
-			columns.Int("ID", nil)
-			break
-		case TINYINT:
-			columns.Tinyint("ID", nil)
-			break
-		case MEDIUMINT:
-			columns.Mediumint("ID", nil)
-			break
-		case BIGINT:
-			columns.Bigint("ID", nil)
-			break
-		case BOOL:
-			columns.Boolean("ID", nil)
-			break
-		}
+		table := CreateTable("users", func(t *Table) {
+			switch s.Type {
+			case INT:
+				t.Int("ID", nil)
+				break
+			case TINYINT:
+				t.Tinyint("ID", nil)
+				break
+			case MEDIUMINT:
+				t.Mediumint("ID", nil)
+				break
+			case BIGINT:
+				t.Bigint("ID", nil)
+				break
+			case BOOL:
+				t.Boolean("ID", nil)
+				break
+			}
+		})
 
-		stmt, err := columns.Columns[0].ParseColumn()
+		stmt, err := table.Columns[0].ParseColumn()
 
 		if err != nil {
 			t.Error(err)
@@ -183,10 +187,11 @@ func TestIntegersColumn(t *testing.T) {
 }
 
 func TestEnumWithDefault(t *testing.T) {
-	columns := NewTableColumns()
-	columns.Enum("role", []string{"admin", "employee", "supervisor"}, &EnumColumnProps{Default: "admin"})
+	table := CreateTable("users", func(t *Table) {
+		t.Enum("role", []string{"admin", "employee", "supervisor"}, &EnumColumnProps{Default: "admin"})
+	})
 
-	stmt, err := columns.Columns[0].ParseColumn()
+	stmt, err := table.Columns[0].ParseColumn()
 
 	if err != nil {
 		t.Error(err)
@@ -212,8 +217,9 @@ func TestNotVarcharColumn(t *testing.T) {
 }
 
 func TestFloatWithNullable(t *testing.T) {
-	columns := NewTableColumns()
-	columns.Float("mark", &NumericColumnProps{Nullable: true, Size: 53})
+	columns := CreateTable("users", func(t *Table) {
+		t.Float("mark", &NumericColumnProps{Nullable: true, Size: 53})
+	})
 
 	stmt, err := columns.Columns[0].ParseColumn()
 
@@ -229,10 +235,11 @@ func TestFloatWithNullable(t *testing.T) {
 }
 
 func TestDoubleWithNullable(t *testing.T) {
-	columns := NewTableColumns()
-	columns.Double("mark", &NumericColumnProps{Nullable: true, Size: 53})
+	table := CreateTable("users", func(t *Table) {
+		t.Double("mark", &NumericColumnProps{Nullable: true, Size: 53})
+	})
 
-	stmt, err := columns.Columns[0].ParseColumn()
+	stmt, err := table.Columns[0].ParseColumn()
 
 	if err != nil {
 		t.Error(err)
@@ -246,12 +253,12 @@ func TestDoubleWithNullable(t *testing.T) {
 }
 
 func TestCreateTableParsing(t *testing.T) {
-	table := CreateTable("users", func(cols *TableColumns) {
-		cols.Int("ID", &NumericColumnProps{AutoIncrement: true})
-		cols.Varchar("first_name", 50, nil)
-		cols.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
-		cols.Date("dob", nil)
-		cols.Text("bio", nil)
+	table := CreateTable("users", func(t *Table) {
+		t.Int("ID", &NumericColumnProps{AutoIncrement: true})
+		t.Varchar("first_name", 50, nil)
+		t.Varchar("last_name", 50, &TextColumnProps{Nullable: true})
+		t.Date("dob", nil)
+		t.Text("bio", nil)
 	})
 
 	buff := new(bytes.Buffer)
