@@ -1,5 +1,0 @@
-{{if eq .Property.Dialect "postgres"}}
-{{.Name}} varchar(255){{with .Property.Default}} DEFAULT '{{.}}'{{end}}
-{{else}}
-{{.Name}} {{.Property.Type}}({{.Property.PrintEnumValues}}){{with .Property.Default}} DEFAULT '{{.}}'{{end}}
-{{end}}
