@@ -211,6 +211,54 @@ func TestDoubleWithNullable(t *testing.T) {
 	}
 }
 
+func TestIncrement(t *testing.T) {
+	table := CreateTable("users", func(table *Table) {
+		table.Increment("ID")
+	}, MYSQL)
+
+	stmt := table.Columns[0].ParseColumn()
+	expected := "ID int AUTO_INCREMENT PRIMARY KEY"
+
+	if condition := stmt != expected; condition {
+		t.Errorf("Expected: %s, and got %q", expected, stmt)
+	}
+
+	table = CreateTable("users", func(table *Table) {
+		table.Increment("ID")
+	}, POSTGRES)
+
+	stmt = table.Columns[0].ParseColumn()
+	expected = "ID serial PRIMARY KEY"
+
+	if condition := stmt != expected; condition {
+		t.Errorf("Expected: %s, and got %q", expected, stmt)
+	}
+}
+
+func TestBigIncrement(t *testing.T) {
+	table := CreateTable("users", func(table *Table) {
+		table.BigIncrement("ID")
+	}, MYSQL)
+
+	stmt := table.Columns[0].ParseColumn()
+	expected := "ID bigint AUTO_INCREMENT PRIMARY KEY"
+
+	if condition := stmt != expected; condition {
+		t.Errorf("Expected: %s, and got %q", expected, stmt)
+	}
+
+	table = CreateTable("users", func(table *Table) {
+		table.BigIncrement("ID")
+	}, POSTGRES)
+
+	stmt = table.Columns[0].ParseColumn()
+	expected = "ID bigserial PRIMARY KEY"
+
+	if condition := stmt != expected; condition {
+		t.Errorf("Expected: %s, and got %q", expected, stmt)
+	}
+}
+
 func TestCreateTableParsing(t *testing.T) {
 	table := CreateTable("users", func(t *Table) {
 		t.Int("ID", &NumericColumnProps{AutoIncrement: true})

@@ -390,3 +390,33 @@ func (t *Table) DoublePrecision(name string, props *NumericColumnProps) {
 
 	t.AddColumn(name, dataType)
 }
+
+func (t *Table) Increment(name string) {
+	dataType := SQLTableProp{
+		Type:       SERIAL,
+		PrimaryKey: true,
+	}
+
+	if t.Dialect == MYSQL {
+		dataType.Type = INT
+		dataType.PrimaryKey = false
+		dataType.AutoIncrement = true
+	}
+
+	t.AddColumn(name, dataType)
+}
+
+func (t *Table) BigIncrement(name string) {
+	dataType := SQLTableProp{
+		Type:       BIGSERIAL,
+		PrimaryKey: true,
+	}
+
+	if t.Dialect == MYSQL {
+		dataType.Type = BIGINT
+		dataType.PrimaryKey = false
+		dataType.AutoIncrement = true
+	}
+
+	t.AddColumn(name, dataType)
+}
