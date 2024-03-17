@@ -40,6 +40,7 @@ func TestCreateTableWithUUID(t *testing.T) {
 	table := CreateTable("items", func(t *Table) {
 		t.Uuid("id", &TextColumnProps{PrimaryKey: true})
 		t.Varchar("name", 50, nil)
+		t.Int("grade", &NumericColumnProps{Default: 1})
 	}, POSTGRES)
 
 	defer db.Close()

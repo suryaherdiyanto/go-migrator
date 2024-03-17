@@ -3,6 +3,7 @@ package gomigrator
 import (
 	"fmt"
 	"slices"
+	"strings"
 )
 
 const (
@@ -132,7 +133,16 @@ func columnParser(col *TableColumn) string {
 	}
 
 	if col.Property.Default != nil {
-		stmt += " DEFAULT " + fmt.Sprintf("%v", col.Property.Default)
+		switch col.Property.Default.(type) {
+		case string:
+			if strings.Contains(fmt.Sprintf("%s", col.Property.Default), "()") {
+				stmt += " DEFAULT " + fmt.Sprintf("%v", col.Property.Default)
+			} else {
+				stmt += " DEFAULT " + fmt.Sprintf("'%v'", col.Property.Default)
+			}
+		default:
+			stmt += " DEFAULT " + fmt.Sprintf("%v", col.Property.Default)
+		}
 	}
 
 	return stmt
