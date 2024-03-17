@@ -56,10 +56,6 @@ type EnumColumnProps struct {
 	Dialect  SQLDialect
 }
 
-type SQLColumn interface {
-	ParseColumn() string
-}
-
 func (c *TableColumn) ParseColumn() string {
 	col := &TableColumn{
 		Name:     c.Name,
