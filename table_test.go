@@ -6,10 +6,11 @@ import (
 )
 
 func TestVarcharColumn(t *testing.T) {
-	columns := NewTableColumns()
-	columns.Varchar("first_name", 50, nil)
+	table := CreateTable("users", func(t *Table) {
+		t.Varchar("first_name", 50, nil)
+	})
 
-	stmt, err := columns.Columns[0].ParseColumn()
+	stmt, err := table.Columns[0].ParseColumn()
 
 	if err != nil {
 		t.Error(err)

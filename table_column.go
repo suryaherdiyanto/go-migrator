@@ -35,10 +35,6 @@ type TableColumn struct {
 	Property *SQLTableProp
 }
 
-type TableColumns struct {
-	Columns []TableColumn
-}
-
 type TextColumnProps struct {
 	Unique     bool
 	Nullable   bool
@@ -77,6 +73,13 @@ func (c *TableColumn) ParseColumn() (string, error) {
 	}
 
 	return strings.Replace(w.String(), "\n", "", 1), nil
+}
+
+func (t *Table) AddColumn(name string, props SQLTableProp) {
+	t.Columns = append(t.Columns, TableColumn{
+		Name:     name,
+		Property: &props,
+	})
 }
 
 func IsNumericColumn(t SQLDataType) bool {
@@ -119,10 +122,6 @@ func parseColumnTemplate(w io.Writer, data *TableColumn) error {
 	return parseTemplate(w, data, templateName, templatePath)
 }
 
-func NewTableColumns() *TableColumns {
-	return &TableColumns{}
-}
-
 func fillProps(t *SQLTableProp, props interface{}) error {
 	switch p := props.(type) {
 	case *TextColumnProps:
@@ -149,7 +148,7 @@ func fillProps(t *SQLTableProp, props interface{}) error {
 
 	return nil
 }
-func (c *TableColumns) Varchar(name string, length int, props *TextColumnProps) {
+func (t *Table) Varchar(name string, length int, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: VARCHAR,
 		Size: length,
@@ -159,15 +158,10 @@ func (c *TableColumns) Varchar(name string, length int, props *TextColumnProps) 
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) Char(name string, length int, props *TextColumnProps) {
+func (t *Table) Char(name string, length int, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: CHAR,
 		Size: length,
@@ -177,15 +171,10 @@ func (c *TableColumns) Char(name string, length int, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) Text(name string, props *TextColumnProps) {
+func (t *Table) Text(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: TEXT,
 	}
@@ -194,15 +183,10 @@ func (c *TableColumns) Text(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) Date(name string, props *TextColumnProps) {
+func (t *Table) Date(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: DATE,
 	}
@@ -211,15 +195,10 @@ func (c *TableColumns) Date(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) Timestamp(name string, props *TextColumnProps) {
+func (t *Table) Timestamp(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: TIMESTAMP,
 	}
@@ -228,15 +207,10 @@ func (c *TableColumns) Timestamp(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) DateTime(name string, props *TextColumnProps) {
+func (t *Table) DateTime(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: DATETIME,
 	}
@@ -245,15 +219,10 @@ func (c *TableColumns) DateTime(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) Enum(name string, options []string, props *EnumColumnProps) {
+func (t *Table) Enum(name string, options []string, props *EnumColumnProps) {
 	dataType := SQLTableProp{
 		Type:        ENUM,
 		EnumOptions: options,
@@ -264,15 +233,10 @@ func (c *TableColumns) Enum(name string, options []string, props *EnumColumnProp
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) Int(name string, props *NumericColumnProps) {
+func (t *Table) Int(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: INT,
 	}
@@ -281,42 +245,27 @@ func (c *TableColumns) Int(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) Serial(name string) {
+func (t *Table) Serial(name string) {
 	dataType := SQLTableProp{
 		Type: SERIAL,
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) BigSerial(name string) {
+func (t *Table) BigSerial(name string) {
 	dataType := SQLTableProp{
 		Type:     BIGSERIAL,
 		Unsigned: true,
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) Tinyint(name string, props *NumericColumnProps) {
+func (t *Table) Tinyint(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: TINYINT,
 	}
@@ -324,15 +273,14 @@ func (c *TableColumns) Tinyint(name string, props *NumericColumnProps) {
 	if props != nil {
 		fillProps(&dataType, props)
 	}
-	col := &TableColumn{
+
+	t.Columns = append(t.Columns, TableColumn{
 		Name:     name,
 		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	})
 }
 
-func (c *TableColumns) Mediumint(name string, props *NumericColumnProps) {
+func (t *Table) Mediumint(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: MEDIUMINT,
 	}
@@ -341,15 +289,13 @@ func (c *TableColumns) Mediumint(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
+	t.Columns = append(t.Columns, TableColumn{
 		Name:     name,
 		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	})
 }
 
-func (c *TableColumns) Bigint(name string, props *NumericColumnProps) {
+func (t *Table) Bigint(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: BIGINT,
 	}
@@ -358,15 +304,13 @@ func (c *TableColumns) Bigint(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
+	t.Columns = append(t.Columns, TableColumn{
 		Name:     name,
 		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	})
 }
 
-func (c *TableColumns) Boolean(name string, props *NumericColumnProps) {
+func (t *Table) Boolean(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: BOOL,
 	}
@@ -375,15 +319,10 @@ func (c *TableColumns) Boolean(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) Float(name string, props *NumericColumnProps) {
+func (t *Table) Float(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: FLOAT,
 	}
@@ -392,15 +331,10 @@ func (c *TableColumns) Float(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) Double(name string, props *NumericColumnProps) {
+func (t *Table) Double(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: DOUBLE,
 	}
@@ -409,15 +343,10 @@ func (c *TableColumns) Double(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) Real(name string, props *NumericColumnProps) {
+func (t *Table) Real(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: REAL,
 	}
@@ -426,15 +355,10 @@ func (c *TableColumns) Real(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }
 
-func (c *TableColumns) DoublePrecision(name string, props *NumericColumnProps) {
+func (t *Table) DoublePrecision(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: DOUBLE_PRECISION,
 	}
@@ -443,10 +367,5 @@ func (c *TableColumns) DoublePrecision(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	col := &TableColumn{
-		Name:     name,
-		Property: &dataType,
-	}
-
-	c.Columns = append(c.Columns, *col)
+	t.AddColumn(name, dataType)
 }

@@ -44,14 +44,11 @@ func (o *SQLTableProp) PrintEnumValues() string {
 	return "'" + strings.Join(o.EnumOptions, "', '") + "'"
 }
 
-func CreateTable(name string, tableColumns func(cols *TableColumns)) *Table {
-	columns := NewTableColumns()
-	tableColumns(columns)
+func CreateTable(name string, tableColumns func(table *Table)) *Table {
+	table := &Table{Name: name}
+	tableColumns(table)
 
-	return &Table{
-		Name:    name,
-		Columns: columns.Columns,
-	}
+	return table
 }
 
 func CreateIndex(indexName string, table string, columns []string) string {
