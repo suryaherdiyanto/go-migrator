@@ -101,16 +101,12 @@ func TestTextsColumn(t *testing.T) {
 			switch s.Type {
 			case CHAR:
 				t.Char("name", s.Size, nil)
-				break
 			case VARCHAR:
 				t.Varchar("name", s.Size, nil)
-				break
 			case DATE:
 				t.Date("name", nil)
-				break
 			case DATETIME:
 				t.DateTime("name", nil)
-				break
 			}
 		})
 		stmt, err := table.Columns[0].ParseColumn()
@@ -158,19 +154,14 @@ func TestIntegersColumn(t *testing.T) {
 			switch s.Type {
 			case INT:
 				t.Int("ID", nil)
-				break
 			case TINYINT:
 				t.Tinyint("ID", nil)
-				break
 			case MEDIUMINT:
 				t.Mediumint("ID", nil)
-				break
 			case BIGINT:
 				t.Bigint("ID", nil)
-				break
 			case BOOL:
 				t.Boolean("ID", nil)
-				break
 			}
 		})
 

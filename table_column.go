@@ -2,7 +2,6 @@ package gomigrator
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"slices"
@@ -129,6 +128,7 @@ func fillProps(t *SQLTableProp, props interface{}) error {
 		t.Default = p.Default
 		t.PrimaryKey = p.PrimaryKey
 		t.Nullable = p.Nullable
+		return nil
 	case *NumericColumnProps:
 		t.Unique = p.Unique
 		t.Default = p.Default
@@ -138,15 +138,15 @@ func fillProps(t *SQLTableProp, props interface{}) error {
 		t.Unsigned = p.Unsigned
 		t.Precision = p.Precision
 		t.Size = p.Size
+		return nil
 	case *EnumColumnProps:
 		t.Default = p.Default
 		t.Nullable = p.Nullable
 		t.Dialect = p.Dialect
-	default:
-		return errors.New(fmt.Sprintf("Invalid type %v", props))
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("invalid type %v", props)
 }
 func (t *Table) Varchar(name string, length int, props *TextColumnProps) {
 	dataType := SQLTableProp{
