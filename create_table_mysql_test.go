@@ -12,6 +12,7 @@ func TestCreateTableMysql(t *testing.T) {
 	}
 
 	table := CreateTable("items", func(t *Table) {
+		t.Increment("id")
 		t.Varchar("name", 50, nil)
 		t.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
 		t.Float("mark", nil)

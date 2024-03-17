@@ -10,7 +10,7 @@ func TestCreateTablePostgres(t *testing.T) {
 	}
 
 	table := CreateTable("items", func(t *Table) {
-		t.Serial("id")
+		t.Increment("id")
 		t.Varchar("name", 50, nil)
 		t.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
 		t.Real("mark", nil)
