@@ -31,3 +31,26 @@ func TestCreateTableMysql(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestCreateTableWithUUIDMysql(t *testing.T) {
+	db, err := NewConnection("mysql", "root:root@tcp(127.0.0.1:3306)/testdb")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	table := CreateTable("items", func(t *Table) {
+		t.Uuid("id", &TextColumnProps{PrimaryKey: true})
+		t.Varchar("name", 50, nil)
+	}, MYSQL)
+
+	defer db.Close()
+
+	_, _ = db.Exec("DROP TABLE IF EXISTS items")
+
+	err = table.Run(db)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
