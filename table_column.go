@@ -55,7 +55,6 @@ type NumericColumnProps struct {
 type EnumColumnProps struct {
 	Default  interface{}
 	Nullable bool
-	Dialect  SQLDialect
 }
 
 func (c *TableColumn) ParseColumn() string {
