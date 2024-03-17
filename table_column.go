@@ -69,13 +69,6 @@ func (c *TableColumn) ParseColumn() string {
 	return columnParser(col)
 }
 
-func (t *Table) AddColumn(name string, props SQLTableProp) {
-	t.Columns = append(t.Columns, TableColumn{
-		Name:     name,
-		Property: &props,
-	})
-}
-
 func IsNumericColumn(t SQLDataType) bool {
 	types := []SQLDataType{
 		INT,

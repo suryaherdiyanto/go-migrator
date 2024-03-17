@@ -88,6 +88,13 @@ func parseTableTemplate(w io.Writer, data *Table) error {
 	return parseTemplate(w, data, "create-table.go.tmpl", templatePath)
 }
 
+func (t *Table) AddColumn(name string, props SQLTableProp) {
+	t.Columns = append(t.Columns, TableColumn{
+		Name:     name,
+		Property: &props,
+	})
+}
+
 func parseTemplate(w io.Writer, data any, name string, path string) error {
 	tmpl, err := template.New(name).ParseFiles(path)
 
