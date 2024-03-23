@@ -22,6 +22,11 @@ type SQLTableProp struct {
 	Precision     int
 }
 
+type ForeignKeyOptions struct {
+	OnDelete string
+	OnUpdate string
+}
+
 const (
 	POSTGRES SQLDialect = "postgres"
 	MYSQL    SQLDialect = "mysql"
@@ -79,6 +84,24 @@ func (t *Table) Run(db *sql.DB) error {
 
 func (t *Table) CreateEnum(name string, options []string) string {
 	return "DROP TYPE IF EXISTS " + name + "; CREATE TYPE " + name + " AS ENUM('" + strings.Join(options, "', '") + "');"
+}
+
+func (t *Table) ForeignKey(column string, reference string, options *ForeignKeyOptions) string {
+	stmt := "ALTER TABLE " + t.Name + " ADD CONSTRAINT fk_" + t.Name + "_" + reference + " FOREIGN KEY (" + column + ") REFERENCES " + reference + ";"
+
+	if options != nil {
+		if options.OnDelete != "" {
+			stmt += " ON DELETE " + options.OnDelete
+		}
+
+		if options.OnUpdate != "" {
+			stmt += " ON UPDATE " + options.OnUpdate
+		}
+	}
+
+	stmt += ";"
+
+	return stmt
 }
 
 func parseTableTemplate(t *Table) string {
