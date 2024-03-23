@@ -1,6 +1,0 @@
-{{$l := .ColumnLength}}
-CREATE TABLE IF NOT EXISTS {{.Name}} (
-    {{range $i, $col := .Columns}}
-        {{$col.ParseColumn}}{{if ne $i $l}},{{end}}
-    {{end}}
-)
