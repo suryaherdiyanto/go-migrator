@@ -35,7 +35,7 @@ func TestCreateTablePostgres(t *testing.T) {
 }
 
 func TestCreateTableWithUUID(t *testing.T) {
-	db, err := gomigrator.NewConnection("postgres", "postgres://postgres:root@localhost/testdb?sslmode=disable")
+	db, err := gomigrator.NewConnection("postgres", "postgres://postgres:postgres@localhost/go-migrator?sslmode=disable")
 
 	if err != nil {
 		t.Error(err)

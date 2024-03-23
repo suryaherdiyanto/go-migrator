@@ -2,9 +2,7 @@ package gomigrator
 
 import (
 	"database/sql"
-	"io"
 	"strings"
-	"text/template"
 )
 
 type SQLDataType string
@@ -56,35 +54,43 @@ func CreateIndex(indexName string, table string, columns []string) string {
 }
 
 func (t *Table) Run(db *sql.DB) error {
-	buff := new(strings.Builder)
-	err := parseTableTemplate(buff, t)
-
-	if err != nil {
-		return err
-	}
+	stmt := parseTableTemplate(t)
 
 	if len(t.EnumStatements) > 0 {
 		for _, enum := range t.EnumStatements {
-			_, err = db.Exec(enum)
+			_, err := db.Exec(enum)
 
 			if err != nil {
 				return err
 			}
 		}
 	}
-	_, err = db.Exec(buff.String())
+
+	_, err := db.Exec(stmt)
+
+	if err != nil {
+		return err
+	}
+
 	defer db.Close()
 
-	return err
+	return nil
 }
 
 func (t *Table) CreateEnum(name string, options []string) string {
 	return "DROP TYPE IF EXISTS " + name + "; CREATE TYPE " + name + " AS ENUM('" + strings.Join(options, "', '") + "');"
 }
 
-func parseTableTemplate(w io.Writer, data *Table) error {
-	templatePath := "./template/mysql/create-table.go.tmpl"
-	return parseTemplate(w, data, "create-table.go.tmpl", templatePath)
+func parseTableTemplate(data *Table) string {
+	stmt := "CREATE TABLE IF NOT EXISTS"
+	stmt += " " + data.Name + "("
+	for i, column := range data.Columns {
+		stmt += column.ParseColumn() + IfNe(i != data.ColumnLength(), ",")
+	}
+
+	stmt = stmt + ")"
+
+	return stmt
 }
 
 func (t *Table) AddColumn(name string, props SQLTableProp) {
@@ -92,14 +98,4 @@ func (t *Table) AddColumn(name string, props SQLTableProp) {
 		Name:     name,
 		Property: &props,
 	})
-}
-
-func parseTemplate(w io.Writer, data any, name string, path string) error {
-	tmpl, err := template.New(name).ParseFiles(path)
-
-	if err != nil {
-		return err
-	}
-
-	return tmpl.Execute(w, data)
 }

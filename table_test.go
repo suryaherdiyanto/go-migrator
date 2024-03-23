@@ -1,7 +1,6 @@
 package gomigrator
 
 import (
-	"bytes"
 	"testing"
 )
 
@@ -291,11 +290,11 @@ func TestCreateTableParsing(t *testing.T) {
 		t.Text("bio", nil)
 	}, MYSQL)
 
-	buff := new(bytes.Buffer)
-	err := parseTableTemplate(buff, table)
+	stmt := parseTableTemplate(table)
+	expected := "CREATE TABLE IF NOT EXISTS users(ID int AUTO_INCREMENT PRIMARY KEY,first_name varchar(50),last_name varchar(50) NULL,dob date,bio text)"
 
-	if err != nil {
-		t.Error(err)
+	if stmt != expected {
+		t.Errorf("Expected: %s, but got %q", expected, stmt)
 	}
 }
 
