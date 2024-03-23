@@ -1,8 +1,8 @@
 package gomigrator
 
-func IfNe(a bool, b string) string {
-	if a {
-		return b
+func IfNe(a interface{}, b interface{}, c string) string {
+	if a != b {
+		return c
 	}
 	return ""
 }

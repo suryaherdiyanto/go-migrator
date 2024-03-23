@@ -81,11 +81,11 @@ func (t *Table) CreateEnum(name string, options []string) string {
 	return "DROP TYPE IF EXISTS " + name + "; CREATE TYPE " + name + " AS ENUM('" + strings.Join(options, "', '") + "');"
 }
 
-func parseTableTemplate(data *Table) string {
+func parseTableTemplate(t *Table) string {
 	stmt := "CREATE TABLE IF NOT EXISTS"
-	stmt += " " + data.Name + "("
-	for i, column := range data.Columns {
-		stmt += column.ParseColumn() + IfNe(i != data.ColumnLength(), ",")
+	stmt += " " + t.Name + "("
+	for i, column := range t.Columns {
+		stmt += column.ParseColumn() + IfNe(i, t.ColumnLength(), ",")
 	}
 
 	stmt = stmt + ")"
