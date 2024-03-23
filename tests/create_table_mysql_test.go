@@ -1,25 +1,27 @@
-package gomigrator
+package tests
 
 import (
 	"testing"
+
+	gomigrator "github.com/suryaherdiyanto/go-migrator"
 )
 
 func TestCreateTableMysql(t *testing.T) {
-	db, err := NewConnection("mysql", "root:root@tcp(127.0.0.1:3306)/testdb")
+	db, err := gomigrator.NewConnection("mysql", "root:mariadb@tcp(localhost:3306)/go-migrator")
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	table := CreateTable("items", func(t *Table) {
+	table := gomigrator.CreateTable("items", func(t *gomigrator.Table) {
 		t.Increment("id")
 		t.Varchar("name", 50, nil)
-		t.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
+		t.Varchar("sku", 50, &gomigrator.TextColumnProps{Nullable: false, Unique: true})
 		t.Float("mark", nil)
 		t.Double("price", nil)
-		t.Enum("status", []string{"active", "inactive"}, &EnumColumnProps{Default: "inactive"})
+		t.Enum("status", []string{"active", "inactive"}, &gomigrator.EnumColumnProps{Default: "inactive"})
 		t.Text("description", nil)
-	}, MYSQL)
+	}, gomigrator.MYSQL)
 
 	defer db.Close()
 
@@ -33,17 +35,17 @@ func TestCreateTableMysql(t *testing.T) {
 }
 
 func TestCreateTableWithUUIDMysql(t *testing.T) {
-	db, err := NewConnection("mysql", "root:root@tcp(127.0.0.1:3306)/testdb")
+	db, err := gomigrator.NewConnection("mysql", "root:mariadb@tcp(127.0.0.1:3306)/go-migrator")
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	table := CreateTable("items", func(t *Table) {
-		t.Uuid("id", &TextColumnProps{PrimaryKey: true})
+	table := gomigrator.CreateTable("items", func(t *gomigrator.Table) {
+		t.Uuid("id", &gomigrator.TextColumnProps{PrimaryKey: true})
 		t.Varchar("name", 50, nil)
-		t.Int("grade", &NumericColumnProps{Default: 1})
-	}, MYSQL)
+		t.Int("grade", &gomigrator.NumericColumnProps{Default: 1})
+	}, gomigrator.MYSQL)
 
 	defer db.Close()
 

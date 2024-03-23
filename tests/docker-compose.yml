@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:13-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: go-migrator
+
+  mariadb:
+    image: mariadb:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: mariadb
+      MARIADB_DATABASE: go-migrator

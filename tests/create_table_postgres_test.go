@@ -1,23 +1,27 @@
-package gomigrator
+package tests
 
-import "testing"
+import (
+	"testing"
+
+	gomigrator "github.com/suryaherdiyanto/go-migrator"
+)
 
 func TestCreateTablePostgres(t *testing.T) {
-	db, err := NewConnection("postgres", "postgres://postgres:root@127.0.0.1/testdb?sslmode=disable")
+	db, err := gomigrator.NewConnection("postgres", "postgres://postgres:postgres@localhost/go-migrator?sslmode=disable")
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	table := CreateTable("items", func(t *Table) {
+	table := gomigrator.CreateTable("items", func(t *gomigrator.Table) {
 		t.Increment("id")
 		t.Varchar("name", 50, nil)
-		t.Varchar("sku", 50, &TextColumnProps{Nullable: false, Unique: true})
+		t.Varchar("sku", 50, &gomigrator.TextColumnProps{Nullable: false, Unique: true})
 		t.Real("mark", nil)
 		t.DoublePrecision("price", nil)
-		t.Enum("status", []string{"active", "inactive"}, &EnumColumnProps{Default: "inactive"})
+		t.Enum("status", []string{"active", "inactive"}, &gomigrator.EnumColumnProps{Default: "inactive"})
 		t.Text("description", nil)
-	}, POSTGRES)
+	}, gomigrator.POSTGRES)
 
 	defer db.Close()
 
@@ -31,17 +35,17 @@ func TestCreateTablePostgres(t *testing.T) {
 }
 
 func TestCreateTableWithUUID(t *testing.T) {
-	db, err := NewConnection("postgres", "postgres://postgres:root@127.0.0.1/testdb?sslmode=disable")
+	db, err := gomigrator.NewConnection("postgres", "postgres://postgres:root@localhost/testdb?sslmode=disable")
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	table := CreateTable("items", func(t *Table) {
-		t.Uuid("id", &TextColumnProps{PrimaryKey: true})
+	table := gomigrator.CreateTable("items", func(t *gomigrator.Table) {
+		t.Uuid("id", &gomigrator.TextColumnProps{PrimaryKey: true})
 		t.Varchar("name", 50, nil)
-		t.Int("grade", &NumericColumnProps{Default: 1})
-	}, POSTGRES)
+		t.Int("grade", &gomigrator.NumericColumnProps{Default: 1})
+	}, gomigrator.POSTGRES)
 
 	defer db.Close()
 

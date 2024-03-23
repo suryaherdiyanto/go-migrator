@@ -1,9 +1,13 @@
-package gomigrator
+package tests
 
-import "testing"
+import (
+	"testing"
+
+	gomigrator "github.com/suryaherdiyanto/go-migrator"
+)
 
 func TestConnection(t *testing.T) {
-	_, err := NewConnection("mysql", "root:root@tcp(127.0.0.1:3306)/testdb")
+	_, err := gomigrator.NewConnection("mysql", "root:mariadb@tcp(localhost:3306)/go-migrator")
 
 	if err != nil {
 		t.Error(err)
