@@ -12,7 +12,7 @@ func (b *Blueprint) AddColumn(name string, props SQLTableProp) {
 	})
 }
 
-func (t *Blueprint) Varchar(name string, length int, props *TextColumnProps) {
+func (b *Blueprint) Varchar(name string, length int, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: VARCHAR,
 		Size: length,
@@ -22,10 +22,10 @@ func (t *Blueprint) Varchar(name string, length int, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Char(name string, length int, props *TextColumnProps) {
+func (b *Blueprint) Char(name string, length int, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: CHAR,
 		Size: length,
@@ -35,10 +35,10 @@ func (t *Blueprint) Char(name string, length int, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Text(name string, props *TextColumnProps) {
+func (b *Blueprint) Text(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: TEXT,
 	}
@@ -47,10 +47,10 @@ func (t *Blueprint) Text(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Date(name string, props *TextColumnProps) {
+func (b *Blueprint) Date(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: DATE,
 	}
@@ -59,10 +59,10 @@ func (t *Blueprint) Date(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Timestamp(name string, props *TextColumnProps) {
+func (b *Blueprint) Timestamp(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: TIMESTAMP,
 	}
@@ -71,10 +71,10 @@ func (t *Blueprint) Timestamp(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) DateTime(name string, props *TextColumnProps) {
+func (b *Blueprint) DateTime(name string, props *TextColumnProps) {
 	dataType := SQLTableProp{
 		Type: DATETIME,
 	}
@@ -83,10 +83,10 @@ func (t *Blueprint) DateTime(name string, props *TextColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Enum(name string, options []string, props *EnumColumnProps) {
+func (b *Blueprint) Enum(name string, options []string, props *EnumColumnProps) {
 	dataType := SQLTableProp{
 		Type:        ENUM,
 		EnumOptions: options,
@@ -96,10 +96,10 @@ func (t *Blueprint) Enum(name string, options []string, props *EnumColumnProps) 
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Int(name string, props *NumericColumnProps) {
+func (b *Blueprint) Int(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: INT,
 	}
@@ -108,27 +108,27 @@ func (t *Blueprint) Int(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Serial(name string) {
+func (b *Blueprint) Serial(name string) {
 	dataType := SQLTableProp{
 		Type: SERIAL,
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) BigSerial(name string) {
+func (b *Blueprint) BigSerial(name string) {
 	dataType := SQLTableProp{
 		Type:     BIGSERIAL,
 		Unsigned: true,
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Tinyint(name string, props *NumericColumnProps) {
+func (b *Blueprint) Tinyint(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: TINYINT,
 	}
@@ -137,13 +137,13 @@ func (t *Blueprint) Tinyint(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.Columns = append(t.Columns, TableColumn{
+	b.Columns = append(b.Columns, TableColumn{
 		Name:     name,
 		Property: &dataType,
 	})
 }
 
-func (t *Blueprint) Mediumint(name string, props *NumericColumnProps) {
+func (b *Blueprint) Mediumint(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: MEDIUMINT,
 	}
@@ -152,13 +152,13 @@ func (t *Blueprint) Mediumint(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.Columns = append(t.Columns, TableColumn{
+	b.Columns = append(b.Columns, TableColumn{
 		Name:     name,
 		Property: &dataType,
 	})
 }
 
-func (t *Blueprint) Bigint(name string, props *NumericColumnProps) {
+func (b *Blueprint) Bigint(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: BIGINT,
 	}
@@ -167,13 +167,13 @@ func (t *Blueprint) Bigint(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.Columns = append(t.Columns, TableColumn{
+	b.Columns = append(b.Columns, TableColumn{
 		Name:     name,
 		Property: &dataType,
 	})
 }
 
-func (t *Blueprint) Boolean(name string, props *NumericColumnProps) {
+func (b *Blueprint) Boolean(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: BOOL,
 	}
@@ -182,10 +182,10 @@ func (t *Blueprint) Boolean(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Float(name string, props *NumericColumnProps) {
+func (b *Blueprint) Float(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: FLOAT,
 	}
@@ -194,10 +194,10 @@ func (t *Blueprint) Float(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Double(name string, props *NumericColumnProps) {
+func (b *Blueprint) Double(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: DOUBLE,
 	}
@@ -206,10 +206,10 @@ func (t *Blueprint) Double(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Real(name string, props *NumericColumnProps) {
+func (b *Blueprint) Real(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: REAL,
 	}
@@ -218,10 +218,10 @@ func (t *Blueprint) Real(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) DoublePrecision(name string, props *NumericColumnProps) {
+func (b *Blueprint) DoublePrecision(name string, props *NumericColumnProps) {
 	dataType := SQLTableProp{
 		Type: DOUBLE_PRECISION,
 	}
@@ -230,40 +230,40 @@ func (t *Blueprint) DoublePrecision(name string, props *NumericColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Increment(name string) {
+func (b *Blueprint) Increment(name string) {
 	dataType := SQLTableProp{
 		Type:       SERIAL,
 		PrimaryKey: true,
 	}
 
-	if t.Dialect == MYSQL {
+	if b.Dialect == MYSQL {
 		dataType.Type = INT
 		dataType.PrimaryKey = false
 		dataType.AutoIncrement = true
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) BigIncrement(name string) {
+func (b *Blueprint) BigIncrement(name string) {
 	dataType := SQLTableProp{
 		Type:       BIGSERIAL,
 		PrimaryKey: true,
 	}
 
-	if t.Dialect == MYSQL {
+	if b.Dialect == MYSQL {
 		dataType.Type = BIGINT
 		dataType.PrimaryKey = false
 		dataType.AutoIncrement = true
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
 
-func (t *Blueprint) Uuid(name string, props *UUIDColumnProps) {
+func (b *Blueprint) Uuid(name string, props *UUIDColumnProps) {
 	dataType := SQLTableProp{
 		Type:    UUID,
 		Default: "gen_random_uuid()",
@@ -273,11 +273,11 @@ func (t *Blueprint) Uuid(name string, props *UUIDColumnProps) {
 		fillProps(&dataType, props)
 	}
 
-	if t.Dialect == MYSQL {
+	if b.Dialect == MYSQL {
 		dataType.Type = VARCHAR
 		dataType.Default = "uuid()"
 		dataType.Size = 36
 	}
 
-	t.AddColumn(name, dataType)
+	b.AddColumn(name, dataType)
 }
