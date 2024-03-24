@@ -299,12 +299,17 @@ func TestCreateTableParsing(t *testing.T) {
 }
 
 func TestCreateIndex(t *testing.T) {
-	index := CreateIndex("idx_users", "users", []string{"first_name", "last_name"})
+	table := CreateTable("users", func(t *Table) {
+		t.Increment("ID")
+		t.Varchar("first_name", 50, nil)
+		t.Varchar("last_name", 50, nil)
+		t.Varchar("email", 50, &TextColumnProps{Unique: true})
+		t.CreateIndex([]string{"first_name", "last_name"})
+	}, MYSQL)
+	expected := "CREATE INDEX users_first_name_last_name_idx ON users(first_name, last_name);"
 
-	expected := "CREATE INDEX idx_users ON users(first_name, last_name);"
-
-	if index != expected {
-		t.Errorf("Expected: %s, and got %q", expected, index)
+	if table.IndexStatements[0] != expected {
+		t.Errorf("Expected: %s, and got %q", expected, table.IndexStatements[0])
 	}
 }
 

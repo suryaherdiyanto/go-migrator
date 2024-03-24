@@ -39,6 +39,7 @@ type Table struct {
 	Columns              []TableColumn
 	EnumStatements       []string
 	ForeignKeyStatements []string
+	IndexStatements      []string
 	Dialect              SQLDialect
 }
 
@@ -57,33 +58,28 @@ func CreateTable(name string, tableColumns func(table *Table), dialect SQLDialec
 	return table
 }
 
-func CreateIndex(indexName string, table string, columns []string) string {
-	return "CREATE INDEX " + indexName + " ON " + table + "(" + strings.Join(columns, ", ") + ");"
+func (t *Table) CreateIndex(columns []string) {
+	indexName := strings.Join(columns, "_")
+	stmt := "CREATE INDEX " + t.Name + "_" + indexName + "_idx" + " ON " + t.Name + "(" + strings.Join(columns, ", ") + ");"
+
+	t.IndexStatements = append(t.IndexStatements, stmt)
 }
 
 func (t *Table) Run(db *sql.DB) error {
 	stmt := parseTableTemplate(t)
 
 	if len(t.EnumStatements) > 0 {
-		for _, enum := range t.EnumStatements {
-			_, err := db.Exec(enum)
-
-			if err != nil {
-				return err
-			}
-		}
+		execStatements(t.EnumStatements, db)
 	}
 
 	_, err := db.Exec(stmt)
 
 	if len(t.ForeignKeyStatements) > 0 {
-		for _, fk := range t.ForeignKeyStatements {
-			_, err := db.Exec(fk)
+		execStatements(t.ForeignKeyStatements, db)
+	}
 
-			if err != nil {
-				return err
-			}
-		}
+	if len(t.IndexStatements) > 0 {
+		execStatements(t.IndexStatements, db)
 	}
 
 	if err != nil {
@@ -123,6 +119,18 @@ func parseTableTemplate(t *Table) string {
 	stmt = stmt + ")"
 
 	return stmt
+}
+
+func execStatements(statements []string, db *sql.DB) error {
+	for _, stmt := range statements {
+		_, err := db.Exec(stmt)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (t *Table) AddColumn(name string, props SQLTableProp) {
