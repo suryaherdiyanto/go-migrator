@@ -76,6 +76,16 @@ func (t *Table) Run(db *sql.DB) error {
 
 	_, err := db.Exec(stmt)
 
+	if len(t.ForeignKeyStatements) > 0 {
+		for _, fk := range t.ForeignKeyStatements {
+			_, err := db.Exec(fk)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	if err != nil {
 		return err
 	}
@@ -88,7 +98,7 @@ func (t *Table) CreateEnum(name string, options []string) string {
 }
 
 func (t *Table) ForeignKey(column string, options *ForeignKeyOptions) {
-	stmt := "ALTER TABLE " + t.Name + " ADD CONSTRAINT fk_" + t.Name + "_" + column + " FOREIGN KEY " + column + " REFERENCES " + options.ReferenceTable + "(" + options.ReferenceColumn + ")"
+	stmt := "ALTER TABLE " + t.Name + " ADD FOREIGN KEY (" + column + ") REFERENCES " + options.ReferenceTable + "(" + options.ReferenceColumn + ")"
 
 	if options.OnDelete != "" {
 		stmt += " ON DELETE " + options.OnDelete

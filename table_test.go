@@ -318,7 +318,7 @@ func TestForeignKey(t *testing.T) {
 	}, MYSQL)
 
 	stmt := tableProfile.ForeignKeyStatements[0]
-	expected := "ALTER TABLE profiles ADD CONSTRAINT fk_profiles_user_id FOREIGN KEY user_id REFERENCES users(id);"
+	expected := "ALTER TABLE profiles ADD FOREIGN KEY (user_id) REFERENCES users(id);"
 
 	if stmt != expected {
 		t.Errorf("Expected: %s, and got %q", expected, stmt)
