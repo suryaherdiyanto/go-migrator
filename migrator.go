@@ -1,5 +1,0 @@
-package gomigrator
-
-func Run() {
-
-}
