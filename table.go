@@ -36,24 +36,26 @@ const (
 
 type Table struct {
 	Name                 string
-	Columns              []TableColumn
+	Blueprint            *Blueprint
 	EnumStatements       []string
 	ForeignKeyStatements []string
 	IndexStatements      []string
-	Dialect              SQLDialect
 }
 
 func (mt *Table) ColumnLength() int {
-	return len(mt.Columns) - 1
+	return len(mt.Blueprint.Columns) - 1
 }
 
 func (o *SQLTableProp) PrintEnumValues() string {
 	return "'" + strings.Join(o.EnumOptions, "', '") + "'"
 }
 
-func CreateTable(name string, tableColumns func(table *Table), dialect SQLDialect) *Table {
-	table := &Table{Name: name, Dialect: dialect}
-	tableColumns(table)
+func CreateTable(name string, tableColumns func(table *Blueprint), dialect SQLDialect) *Table {
+	table := &Table{Name: name}
+	blueprint := &Blueprint{Columns: []TableColumn{}, Dialect: dialect}
+
+	tableColumns(blueprint)
+	table.Blueprint = blueprint
 
 	return table
 }
@@ -112,8 +114,13 @@ func (t *Table) ForeignKey(column string, options *ForeignKeyOptions) {
 func parseTableTemplate(t *Table) string {
 	stmt := "CREATE TABLE IF NOT EXISTS"
 	stmt += " " + t.Name + "("
-	for i, column := range t.Columns {
+	for i, column := range t.Blueprint.Columns {
 		stmt += column.ParseColumn() + IfNe(i, t.ColumnLength(), ",")
+
+		if t.Blueprint.Dialect == POSTGRES && column.Property.Type == ENUM {
+			enumType := t.Name + "_" + column.Name + "_type"
+			t.EnumStatements = append(t.EnumStatements, t.CreateEnum(enumType, column.Property.EnumOptions))
+		}
 	}
 
 	stmt = stmt + ")"
@@ -131,11 +138,4 @@ func execStatements(statements []string, db *sql.DB) error {
 	}
 
 	return nil
-}
-
-func (t *Table) AddColumn(name string, props SQLTableProp) {
-	t.Columns = append(t.Columns, TableColumn{
-		Name:     name,
-		Property: &props,
-	})
 }
