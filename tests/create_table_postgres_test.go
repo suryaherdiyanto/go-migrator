@@ -93,3 +93,28 @@ func TestCreateTableWithForeignKeyPostgres(t *testing.T) {
 
 	defer db.Close()
 }
+
+func TestCreateTableWithIndexPostres(t *testing.T) {
+	db, err := gomigrator.NewConnection("postgres", "postgres://postgres:postgres@localhost/go-migrator?sslmode=disable")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	table := gomigrator.CreateTable("users", func(t *gomigrator.Table) {
+		t.Increment("ID")
+		t.Varchar("first_name", 50, nil)
+		t.Varchar("last_name", 50, nil)
+		t.Varchar("email", 50, &gomigrator.TextColumnProps{Unique: true})
+		t.CreateIndex([]string{"first_name", "last_name"})
+	}, gomigrator.POSTGRES)
+
+	defer db.Close()
+
+	err = table.Run(db)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+}
