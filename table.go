@@ -115,12 +115,13 @@ func parseTableTemplate(t *Table) string {
 	stmt := "CREATE TABLE IF NOT EXISTS"
 	stmt += " " + t.Name + "("
 	for i, column := range t.Blueprint.Columns {
-		stmt += column.ParseColumn() + IfNe(i, t.ColumnLength(), ",")
-
 		if t.Blueprint.Dialect == POSTGRES && column.Property.Type == ENUM {
 			enumType := t.Name + "_" + column.Name + "_type"
 			t.EnumStatements = append(t.EnumStatements, t.CreateEnum(enumType, column.Property.EnumOptions))
+			column.Property.Type = SQLDataType(t.Name + "_" + column.Name + "_type")
 		}
+
+		stmt += column.ParseColumn() + IfNe(i, t.ColumnLength(), ",")
 	}
 
 	stmt = stmt + ")"

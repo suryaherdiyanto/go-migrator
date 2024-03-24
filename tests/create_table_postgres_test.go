@@ -13,7 +13,7 @@ func TestCreateTablePostgres(t *testing.T) {
 		t.Error(err)
 	}
 
-	table := gomigrator.CreateTable("items", func(t *gomigrator.Table) {
+	table := gomigrator.CreateTable("items", func(t *gomigrator.Blueprint) {
 		t.Increment("id")
 		t.Varchar("name", 50, nil)
 		t.Varchar("sku", 50, &gomigrator.TextColumnProps{Nullable: false, Unique: true})
@@ -41,7 +41,7 @@ func TestCreateTableWithUUID(t *testing.T) {
 		t.Error(err)
 	}
 
-	table := gomigrator.CreateTable("items", func(t *gomigrator.Table) {
+	table := gomigrator.CreateTable("items", func(t *gomigrator.Blueprint) {
 		t.Uuid("id", &gomigrator.UUIDColumnProps{PrimaryKey: true})
 		t.Varchar("name", 50, nil)
 		t.Int("grade", &gomigrator.NumericColumnProps{Default: 1})
@@ -65,19 +65,19 @@ func TestCreateTableWithForeignKeyPostgres(t *testing.T) {
 		t.Error(err)
 	}
 
-	tableUser := gomigrator.CreateTable("users", func(t *gomigrator.Table) {
+	tableUser := gomigrator.CreateTable("users", func(t *gomigrator.Blueprint) {
 		t.Uuid("id", &gomigrator.UUIDColumnProps{PrimaryKey: true})
 		t.Varchar("first_name", 50, nil)
 		t.Varchar("last_name", 50, nil)
 	}, gomigrator.POSTGRES)
 
-	tableProfile := gomigrator.CreateTable("profiles", func(t *gomigrator.Table) {
+	tableProfile := gomigrator.CreateTable("profiles", func(t *gomigrator.Blueprint) {
 		t.Uuid("id", &gomigrator.UUIDColumnProps{PrimaryKey: true})
 		t.Uuid("user_id", nil)
 
-		t.ForeignKey("user_id", &gomigrator.ForeignKeyOptions{ReferenceTable: "users", ReferenceColumn: "id"})
 		t.Varchar("address", 100, nil)
 	}, gomigrator.POSTGRES)
+	tableProfile.ForeignKey("user_id", &gomigrator.ForeignKeyOptions{ReferenceTable: "users", ReferenceColumn: "id"})
 
 	err = tableUser.Run(db)
 
@@ -101,13 +101,13 @@ func TestCreateTableWithIndexPostres(t *testing.T) {
 		t.Error(err)
 	}
 
-	table := gomigrator.CreateTable("users", func(t *gomigrator.Table) {
+	table := gomigrator.CreateTable("users", func(t *gomigrator.Blueprint) {
 		t.Increment("ID")
 		t.Varchar("first_name", 50, nil)
 		t.Varchar("last_name", 50, nil)
 		t.Varchar("email", 50, &gomigrator.TextColumnProps{Unique: true})
-		t.CreateIndex([]string{"first_name", "last_name"})
 	}, gomigrator.POSTGRES)
+	table.CreateIndex([]string{"first_name", "last_name"})
 
 	defer db.Close()
 
