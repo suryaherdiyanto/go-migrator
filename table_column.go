@@ -57,6 +57,11 @@ type EnumColumnProps struct {
 	Nullable bool
 }
 
+type UUIDColumnProps struct {
+	PrimaryKey bool
+	Unique     bool
+}
+
 func (c *TableColumn) ParseColumn() string {
 	col := &TableColumn{
 		Name:     c.Name,
@@ -169,6 +174,9 @@ func fillProps(t *SQLTableProp, props interface{}) error {
 		t.Default = p.Default
 		t.Nullable = p.Nullable
 		return nil
+	case *UUIDColumnProps:
+		t.PrimaryKey = p.PrimaryKey
+		t.Unique = p.Unique
 	}
 
 	return fmt.Errorf("invalid type %v", props)
@@ -430,12 +438,14 @@ func (t *Table) BigIncrement(name string) {
 	t.AddColumn(name, dataType)
 }
 
-func (t *Table) Uuid(name string, props *TextColumnProps) {
+func (t *Table) Uuid(name string, props *UUIDColumnProps) {
 	dataType := SQLTableProp{
-		Type:       UUID,
-		Default:    "gen_random_uuid()",
-		PrimaryKey: props.PrimaryKey,
-		Unique:     props.Unique,
+		Type:    UUID,
+		Default: "gen_random_uuid()",
+	}
+
+	if props != nil {
+		fillProps(&dataType, props)
 	}
 
 	if t.Dialect == MYSQL {

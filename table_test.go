@@ -260,7 +260,7 @@ func TestBigIncrement(t *testing.T) {
 
 func TestUuid(t *testing.T) {
 	table := CreateTable("users", func(table *Table) {
-		table.Uuid("ID", &TextColumnProps{PrimaryKey: true})
+		table.Uuid("ID", &UUIDColumnProps{PrimaryKey: true})
 	}, POSTGRES)
 
 	stmt := table.Columns[0].ParseColumn()
@@ -270,7 +270,7 @@ func TestUuid(t *testing.T) {
 	}
 
 	table = CreateTable("users", func(table *Table) {
-		table.Uuid("ID", &TextColumnProps{PrimaryKey: true})
+		table.Uuid("ID", &UUIDColumnProps{PrimaryKey: true})
 	}, MYSQL)
 
 	stmt = table.Columns[0].ParseColumn()
@@ -305,5 +305,22 @@ func TestCreateIndex(t *testing.T) {
 
 	if index != expected {
 		t.Errorf("Expected: %s, and got %q", expected, index)
+	}
+}
+
+func TestForeignKey(t *testing.T) {
+	tableProfile := CreateTable("profiles", func(t *Table) {
+		t.Uuid("id", &UUIDColumnProps{PrimaryKey: true})
+		t.Uuid("user_id", nil)
+
+		t.ForeignKey("user_id", &ForeignKeyOptions{ReferenceTable: "users", ReferenceColumn: "id"})
+		t.Varchar("address", 100, nil)
+	}, MYSQL)
+
+	stmt := tableProfile.ForeignKeyStatements[0]
+	expected := "ALTER TABLE profiles ADD CONSTRAINT fk_profiles_user_id FOREIGN KEY user_id REFERENCES users(id);"
+
+	if stmt != expected {
+		t.Errorf("Expected: %s, and got %q", expected, stmt)
 	}
 }

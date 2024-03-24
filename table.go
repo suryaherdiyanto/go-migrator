@@ -23,8 +23,10 @@ type SQLTableProp struct {
 }
 
 type ForeignKeyOptions struct {
-	OnDelete string
-	OnUpdate string
+	ReferenceTable  string
+	ReferenceColumn string
+	OnDelete        string
+	OnUpdate        string
 }
 
 const (
@@ -33,10 +35,11 @@ const (
 )
 
 type Table struct {
-	Name           string
-	Columns        []TableColumn
-	EnumStatements []string
-	Dialect        SQLDialect
+	Name                 string
+	Columns              []TableColumn
+	EnumStatements       []string
+	ForeignKeyStatements []string
+	Dialect              SQLDialect
 }
 
 func (mt *Table) ColumnLength() int {
@@ -77,8 +80,6 @@ func (t *Table) Run(db *sql.DB) error {
 		return err
 	}
 
-	defer db.Close()
-
 	return nil
 }
 
@@ -86,22 +87,20 @@ func (t *Table) CreateEnum(name string, options []string) string {
 	return "DROP TYPE IF EXISTS " + name + "; CREATE TYPE " + name + " AS ENUM('" + strings.Join(options, "', '") + "');"
 }
 
-func (t *Table) ForeignKey(column string, reference string, options *ForeignKeyOptions) string {
-	stmt := "ALTER TABLE " + t.Name + " ADD CONSTRAINT fk_" + t.Name + "_" + reference + " FOREIGN KEY (" + column + ") REFERENCES " + reference + ";"
+func (t *Table) ForeignKey(column string, options *ForeignKeyOptions) {
+	stmt := "ALTER TABLE " + t.Name + " ADD CONSTRAINT fk_" + t.Name + "_" + column + " FOREIGN KEY " + column + " REFERENCES " + options.ReferenceTable + "(" + options.ReferenceColumn + ")"
 
-	if options != nil {
-		if options.OnDelete != "" {
-			stmt += " ON DELETE " + options.OnDelete
-		}
+	if options.OnDelete != "" {
+		stmt += " ON DELETE " + options.OnDelete
+	}
 
-		if options.OnUpdate != "" {
-			stmt += " ON UPDATE " + options.OnUpdate
-		}
+	if options.OnUpdate != "" {
+		stmt += " ON UPDATE " + options.OnUpdate
 	}
 
 	stmt += ";"
 
-	return stmt
+	t.ForeignKeyStatements = append(t.ForeignKeyStatements, stmt)
 }
 
 func parseTableTemplate(t *Table) string {
